@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEX - Decentralized Exchange</title>
+    <!-- Intentar cargar localmente primero, luego CDN como respaldo -->
+    <script src="./ethers.min.js" onerror="loadEthersFromCDN()"></script>
+    <script>
+        function loadEthersFromCDN() {
+            console.log('Cargando Ethers.js desde CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js';
+            document.head.appendChild(script);
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .status-item {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .status-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .error-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .addresses {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .addresses h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .address-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f5f5f5;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .address-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 DEX</h1>
+            <p class="subtitle">Decentralized Exchange - AMM Protocol</p>
+        </header>
+
+        <div class="status-bar">
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">Estado de Red</div>
+                    <div class="status-value" id="networkStatus">Desconectado</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Cuenta Conectada</div>
+                    <div class="status-value" id="accountStatus">No conectado</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Balance ETH</div>
+                    <div class="status-value" id="ethBalance">0</div>
+                </div>
+                <div class="status-item" style="grid-column: span 1;">
+                    <button id="connectWalletBtn" onclick="connectWalletManual()" style="margin: 0; padding: 10px; font-size: 0.9em;">
+                        🦊 Conectar Wallet
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Swap Card -->
+            <div class="card">
+                <h2>💱 Swap Tokens</h2>
+                <div class="input-group">
+                    <label>Token de Entrada</label>
+                    <select id="tokenIn">
+                        <option value="tokenA">Token A</option>
+                        <option value="tokenB">Token B</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Cantidad</label>
+                    <input type="number" id="swapAmount" placeholder="0.0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Token de Salida</label>
+                    <select id="tokenOut">
+                        <option value="tokenB">Token B</option>
+                        <option value="tokenA">Token A</option>
+                    </select>
+                </div>
+                <div class="info-box" id="swapInfo" style="display: none;">
+                    <strong>Recibirás aproximadamente:</strong>
+                    <div id="estimatedOutput">0</div>
+                </div>
+                <button onclick="executeSwap()">Swap</button>
+                <div class="loading" id="swapLoading">
+                    <div class="spinner"></div>
+                    <div>Procesando swap...</div>
+                </div>
+            </div>
+
+            <!-- Add Liquidity Card -->
+            <div class="card">
+                <h2>💰 Añadir Liquidez</h2>
+                <div class="input-group">
+                    <label>Cantidad Token A</label>
+                    <input type="number" id="liquidityAmountA" placeholder="0.0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Cantidad Token B</label>
+                    <input type="number" id="liquidityAmountB" placeholder="0.0" step="0.01">
+                </div>
+                <div class="info-box">
+                    <strong>ℹ️ Info:</strong> Recibirás LP tokens que representan tu participación en el pool.
+                </div>
+                <button onclick="addLiquidity()">Añadir Liquidez</button>
+                <div class="loading" id="liquidityLoading">
+                    <div class="spinner"></div>
+                    <div>Añadiendo liquidez...</div>
+                </div>
+            </div>
+
+            <!-- Remove Liquidity Card -->
+            <div class="card">
+                <h2>💸 Remover Liquidez</h2>
+                <div class="input-group">
+                    <label>LP Tokens</label>
+                    <input type="number" id="lpAmount" placeholder="0.0" step="0.01">
+                </div>
+                <div class="info-box">
+                    <strong>ℹ️ Info:</strong> Recibirás de vuelta tus tokens A y B proporcionalmente.
+                </div>
+                <button onclick="removeLiquidity()">Remover Liquidez</button>
+                <div class="loading" id="removeLoading">
+                    <div class="spinner"></div>
+                    <div>Removiendo liquidez...</div>
+                </div>
+            </div>
+
+            <!-- Pool Info Card -->
+            <div class="card">
+                <h2>📊 Info del Pool</h2>
+                <div class="input-group">
+                    <button onclick="getPoolInfo()">Actualizar Info</button>
+                </div>
+                <div id="poolInfo">
+                    <div class="address-item">
+                        <span class="address-label">Reserva Token A:</span>
+                        <span id="reserveA">0</span>
+                    </div>
+                    <div class="address-item">
+                        <span class="address-label">Reserva Token B:</span>
+                        <span id="reserveB">0</span>
+                    </div>
+                    <div class="address-item">
+                        <span class="address-label">Precio (B/A):</span>
+                        <span id="price">0</span>
+                    </div>
+                    <div class="address-item">
+                        <span class="address-label">Mis LP Tokens:</span>
+                        <span id="myLPTokens">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="addresses">
+            <h3>📝 Direcciones de Contratos</h3>
+            <div class="address-item">
+                <span class="address-label">Factory:</span>
+                <span id="factoryAddress">-</span>
+            </div>
+            <div class="address-item">
+                <span class="address-label">Router:</span>
+                <span id="routerAddress">-</span>
+            </div>
+            <div class="address-item">
+                <span class="address-label">Token A:</span>
+                <span id="tokenAAddress">-</span>
+            </div>
+            <div class="address-item">
+                <span class="address-label">Token B:</span>
+                <span id="tokenBAddress">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración (estas direcciones se actualizarán automáticamente)
+        const addresses = {
+            factory: "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
+            router: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
+            tokenA: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
+            tokenB: "0x9d4454B023096f34B160D6B654540c56A1F81688"
+        };
+
+        // ABIs simplificados
+        const routerABI = [
+            "function addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256) external returns (uint256,uint256,uint256)",
+            "function removeLiquidity(address,address,uint256,uint256,uint256,address,uint256) external returns (uint256,uint256)",
+            "function swapExactTokensForTokens(uint256,uint256,address[],address,uint256) external returns (uint256[])",
+            "function getAmountsOut(uint256,address[]) view returns (uint256[])"
+        ];
+
+        const tokenABI = [
+            "function approve(address,uint256) external returns (bool)",
+            "function balanceOf(address) view returns (uint256)",
+            "function allowance(address,address) view returns (uint256)"
+        ];
+
+        const pairABI = [
+            "function getReserves() view returns (uint256,uint256)",
+            "function balanceOf(address) view returns (uint256)",
+            "function approve(address,uint256) external returns (bool)"
+        ];
+
+        const factoryABI = [
+            "function getPair(address,address) view returns (address)"
+        ];
+
+        let provider, signer, router, tokenA, tokenB, factory, pair;
+        let isMetaMask = false;
+
+        // Inicializar cuando cargue la página
+        window.addEventListener('load', async () => {
+            console.log('Página cargada, verificando Ethers.js...');
+            
+            // Verificar que ethers esté disponible
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            const checkEthers = async () => {
+                if (typeof ethers !== 'undefined') {
+                    console.log('✅ Ethers.js cargado exitosamente, versión:', ethers.version);
+                    await initializeApp();
+                } else {
+                    attempts++;
+                    if (attempts < maxAttempts) {
+                        console.log(`Intento ${attempts}/${maxAttempts} - Esperando a Ethers.js...`);
+                        setTimeout(checkEthers, 200);
+                    } else {
+                        console.error('❌ No se pudo cargar Ethers.js después de', maxAttempts, 'intentos');
+                        document.getElementById('networkStatus').textContent = '❌ Error cargando biblioteca';
+                        document.getElementById('accountStatus').textContent = 'Recarga la página';
+                        alert('Error cargando Ethers.js. Verifica tu conexión a internet y recarga la página.');
+                    }
+                }
+            };
+            
+            await checkEthers();
+        });
+        
+        async function initializeApp() {
+            console.log('📱 Inicializando aplicación...');
+            displayAddresses();
+            
+            // Detectar si MetaMask está disponible
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('MetaMask detectado');
+                document.getElementById('connectWalletBtn').textContent = '🦊 Conectar MetaMask';
+                
+                // Escuchar cambios de cuenta
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length > 0) {
+                        connectWalletManual();
+                    } else {
+                        document.getElementById('accountStatus').textContent = 'No conectado';
+                        document.getElementById('connectWalletBtn').textContent = '🦊 Conectar MetaMask';
+                        document.getElementById('connectWalletBtn').disabled = false;
+                    }
+                });
+                
+                // Escuchar cambios de red
+                window.ethereum.on('chainChanged', () => {
+                    window.location.reload();
+                });
+            } else {
+                console.log('MetaMask no detectado, conectando a localhost...');
+                // Si no hay MetaMask, conectar automáticamente a localhost
+                await connectToLocalhost();
+            }
+        }
+
+        async function connectWalletManual() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    // Verificar que ethers esté cargado
+                    if (typeof ethers === 'undefined') {
+                        alert('Error: Ethers.js no se ha cargado correctamente. Por favor recarga la página.');
+                        return;
+                    }
+                    
+                    // Solicitar acceso a MetaMask
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+                    isMetaMask = true;
+                    
+                    // Verificar la red
+                    const network = await provider.getNetwork();
+                    const chainId = network.chainId;
+                    
+                    // Si no está en localhost (chainId 1337 o 31337), intentar cambiar
+                    if (chainId !== 1337 && chainId !== 31337) {
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_switchEthereumChain',
+                                params: [{ chainId: '0x539' }], // 1337 en hex
+                            });
+                        } catch (switchError) {
+                            // Si la red no existe, añadirla
+                            if (switchError.code === 4902) {
+                                try {
+                                    await window.ethereum.request({
+                                        method: 'wallet_addEthereumChain',
+                                        params: [{
+                                            chainId: '0x539',
+                                            chainName: 'Hardhat Local',
+                                            nativeCurrency: {
+                                                name: 'ETH',
+                                                symbol: 'ETH',
+                                                decimals: 18
+                                            },
+                                            rpcUrls: ['http://localhost:8545'],
+                                        }],
+                                    });
+                                } catch (addError) {
+                                    console.error('Error añadiendo red:', addError);
+                                }
+                            }
+                        }
+                    }
+                    
+                    await initializeContracts();
+                    await updateUIStatus();
+                    
+                    document.getElementById('connectWalletBtn').textContent = '✅ Conectado';
+                    document.getElementById('connectWalletBtn').disabled = true;
+                } catch (error) {
+                    console.error('Error conectando wallet:', error);
+                    alert('Error al conectar MetaMask: ' + error.message);
+                }
+            } else {
+                alert('MetaMask no está instalado. Usando nodo local...');
+                await connectToLocalhost();
+            }
+        }
+
+        async function connectToLocalhost() {
+            try {
+                // Verificar que ethers esté cargado
+                if (typeof ethers === 'undefined') {
+                    console.error('Ethers.js no está cargado');
+                    document.getElementById('networkStatus').textContent = '❌ Error cargando biblioteca';
+                    return;
+                }
+                
+                // Conectar a localhost:8545
+                provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+                
+                // Usar la primera cuenta del nodo local
+                signer = provider.getSigner(0);
+                isMetaMask = false;
+                
+                await initializeContracts();
+                await updateUIStatus('Localhost (Hardhat)');
+                
+                document.getElementById('connectWalletBtn').textContent = '✅ Localhost';
+                document.getElementById('connectWalletBtn').disabled = true;
+            } catch (error) {
+                console.error('Error conectando:', error);
+                document.getElementById('networkStatus').textContent = '❌ Error de conexión';
+                document.getElementById('accountStatus').textContent = 'No conectado';
+            }
+        }
+
+        async function initializeContracts() {
+            // Inicializar contratos
+            router = new ethers.Contract(addresses.router, routerABI, signer);
+            tokenA = new ethers.Contract(addresses.tokenA, tokenABI, signer);
+            tokenB = new ethers.Contract(addresses.tokenB, tokenABI, signer);
+            factory = new ethers.Contract(addresses.factory, factoryABI, signer);
+            
+            // Obtener dirección del par
+            const pairAddress = await factory.getPair(addresses.tokenA, addresses.tokenB);
+            pair = new ethers.Contract(pairAddress, pairABI, signer);
+        }
+
+        async function updateUIStatus(networkName = null) {
+            try {
+                const address = await signer.getAddress();
+                const balance = await provider.getBalance(address);
+                
+                if (!networkName) {
+                    const network = await provider.getNetwork();
+                    networkName = network.chainId === 1337 || network.chainId === 31337 
+                        ? 'Localhost (Hardhat)' 
+                        : `Chain ID: ${network.chainId}`;
+                }
+                
+                document.getElementById('networkStatus').textContent = networkName;
+                document.getElementById('accountStatus').textContent = address.substring(0, 6) + '...' + address.substring(38);
+                document.getElementById('ethBalance').textContent = ethers.utils.formatEther(balance).substring(0, 8) + ' ETH';
+                
+                await getPoolInfo();
+            } catch (error) {
+                console.error('Error actualizando UI:', error);
+            }
+        }
+
+        function displayAddresses() {
+            document.getElementById('factoryAddress').textContent = addresses.factory;
+            document.getElementById('routerAddress').textContent = addresses.router;
+            document.getElementById('tokenAAddress').textContent = addresses.tokenA;
+            document.getElementById('tokenBAddress').textContent = addresses.tokenB;
+        }
+
+        async function executeSwap() {
+            try {
+                if (!signer) {
+                    alert('Por favor, conecta tu wallet primero');
+                    return;
+                }
+                
+                const loading = document.getElementById('swapLoading');
+                loading.classList.add('active');
+                
+                const tokenIn = document.getElementById('tokenIn').value;
+                const tokenOut = document.getElementById('tokenOut').value;
+                const amount = document.getElementById('swapAmount').value;
+                
+                if (!amount || amount <= 0) {
+                    alert('Ingresa una cantidad válida');
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                if (tokenIn === tokenOut) {
+                    alert('Los tokens de entrada y salida deben ser diferentes');
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                const amountIn = ethers.utils.parseEther(amount);
+                const tokenInAddress = tokenIn === 'tokenA' ? addresses.tokenA : addresses.tokenB;
+                const tokenOutAddress = tokenOut === 'tokenA' ? addresses.tokenA : addresses.tokenB;
+                const tokenContract = tokenIn === 'tokenA' ? tokenA : tokenB;
+                
+                // Verificar balance
+                const balance = await tokenContract.balanceOf(await signer.getAddress());
+                if (balance.lt(amountIn)) {
+                    alert(`Balance insuficiente. Tienes ${ethers.utils.formatEther(balance)} tokens`);
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                // Aprobar tokens
+                console.log('Aprobando tokens...');
+                const approveTx = await tokenContract.approve(addresses.router, amountIn);
+                await approveTx.wait();
+                console.log('Tokens aprobados');
+                
+                // Hacer swap
+                const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
+                const path = [tokenInAddress, tokenOutAddress];
+                
+                console.log('Ejecutando swap...');
+                const swapTx = await router.swapExactTokensForTokens(
+                    amountIn,
+                    0,
+                    path,
+                    await signer.getAddress(),
+                    deadline
+                );
+                await swapTx.wait();
+                console.log('Swap completado');
+                
+                loading.classList.remove('active');
+                alert('✅ Swap exitoso!');
+                await getPoolInfo();
+                await updateUIStatus();
+            } catch (error) {
+                document.getElementById('swapLoading').classList.remove('active');
+                console.error('Error en swap:', error);
+                alert('Error: ' + (error.reason || error.message || 'Error desconocido'));
+            }
+        }
+
+        async function addLiquidity() {
+            try {
+                if (!signer) {
+                    alert('Por favor, conecta tu wallet primero');
+                    return;
+                }
+                
+                const loading = document.getElementById('liquidityLoading');
+                loading.classList.add('active');
+                
+                const amountA = document.getElementById('liquidityAmountA').value;
+                const amountB = document.getElementById('liquidityAmountB').value;
+                
+                if (!amountA || !amountB || amountA <= 0 || amountB <= 0) {
+                    alert('Ingresa cantidades válidas');
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                const amountAWei = ethers.utils.parseEther(amountA);
+                const amountBWei = ethers.utils.parseEther(amountB);
+                
+                // Verificar balances
+                const balanceA = await tokenA.balanceOf(await signer.getAddress());
+                const balanceB = await tokenB.balanceOf(await signer.getAddress());
+                
+                if (balanceA.lt(amountAWei)) {
+                    alert(`Balance insuficiente de Token A. Tienes ${ethers.utils.formatEther(balanceA)}`);
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                if (balanceB.lt(amountBWei)) {
+                    alert(`Balance insuficiente de Token B. Tienes ${ethers.utils.formatEther(balanceB)}`);
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                // Aprobar tokens
+                console.log('Aprobando Token A...');
+                const approveATx = await tokenA.approve(addresses.router, amountAWei);
+                await approveATx.wait();
+                
+                console.log('Aprobando Token B...');
+                const approveBTx = await tokenB.approve(addresses.router, amountBWei);
+                await approveBTx.wait();
+                
+                // Añadir liquidez
+                console.log('Añadiendo liquidez...');
+                const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
+                const addLiqTx = await router.addLiquidity(
+                    addresses.tokenA,
+                    addresses.tokenB,
+                    amountAWei,
+                    amountBWei,
+                    0,
+                    0,
+                    await signer.getAddress(),
+                    deadline
+                );
+                await addLiqTx.wait();
+                console.log('Liquidez añadida');
+                
+                loading.classList.remove('active');
+                alert('✅ Liquidez añadida exitosamente!');
+                await getPoolInfo();
+                await updateUIStatus();
+            } catch (error) {
+                document.getElementById('liquidityLoading').classList.remove('active');
+                console.error('Error añadiendo liquidez:', error);
+                alert('Error: ' + (error.reason || error.message || 'Error desconocido'));
+            }
+        }
+
+        async function removeLiquidity() {
+            try {
+                if (!signer) {
+                    alert('Por favor, conecta tu wallet primero');
+                    return;
+                }
+                
+                const loading = document.getElementById('removeLoading');
+                loading.classList.add('active');
+                
+                const lpAmount = document.getElementById('lpAmount').value;
+                
+                if (!lpAmount || lpAmount <= 0) {
+                    alert('Ingresa una cantidad válida de LP tokens');
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                const lpAmountWei = ethers.utils.parseEther(lpAmount);
+                
+                // Verificar balance de LP tokens
+                const lpBalance = await pair.balanceOf(await signer.getAddress());
+                if (lpBalance.lt(lpAmountWei)) {
+                    alert(`LP tokens insuficientes. Tienes ${ethers.utils.formatEther(lpBalance)}`);
+                    loading.classList.remove('active');
+                    return;
+                }
+                
+                // Aprobar LP tokens
+                console.log('Aprobando LP tokens...');
+                const approveTx = await pair.approve(addresses.router, lpAmountWei);
+                await approveTx.wait();
+                
+                // Remover liquidez
+                console.log('Removiendo liquidez...');
+                const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
+                const removeLiqTx = await router.removeLiquidity(
+                    addresses.tokenA,
+                    addresses.tokenB,
+                    lpAmountWei,
+                    0,
+                    0,
+                    await signer.getAddress(),
+                    deadline
+                );
+                await removeLiqTx.wait();
+                console.log('Liquidez removida');
+                
+                loading.classList.remove('active');
+                alert('✅ Liquidez removida exitosamente!');
+                await getPoolInfo();
+                await updateUIStatus();
+            } catch (error) {
+                document.getElementById('removeLoading').classList.remove('active');
+                console.error('Error removiendo liquidez:', error);
+                alert('Error: ' + (error.reason || error.message || 'Error desconocido'));
+            }
+        }
+
+        async function getPoolInfo() {
+            try {
+                if (!pair || !signer) return;
+                
+                const [reserve0, reserve1] = await pair.getReserves();
+                const lpBalance = await pair.balanceOf(await signer.getAddress());
+                
+                const reserveA = ethers.utils.formatEther(reserve0);
+                const reserveB = ethers.utils.formatEther(reserve1);
+                const price = reserve0.gt(0) ? (parseFloat(reserveB) / parseFloat(reserveA)).toFixed(6) : '0';
+                
+                document.getElementById('reserveA').textContent = parseFloat(reserveA).toFixed(4);
+                document.getElementById('reserveB').textContent = parseFloat(reserveB).toFixed(4);
+                document.getElementById('price').textContent = price;
+                document.getElementById('myLPTokens').textContent = parseFloat(ethers.utils.formatEther(lpBalance)).toFixed(4);
+            } catch (error) {
+                console.error('Error obteniendo info del pool:', error);
+            }
+        }
+
+        // Actualizar info del pool cada 10 segundos
+        setInterval(() => {
+            if (signer) {
+                getPoolInfo();
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
