@@ -11,6 +11,14 @@ contract DEXRouter {
     
     // ¿Por qué immutable? Porque nunca cambiará y ahorra gas
     address public immutable factory;
+
+    event Swap(
+    address indexed user,
+    address indexed fromToken,
+    address indexed toToken,
+    uint amountIn,
+    uint amountOut
+);
     
     // ========== CONSTRUCTOR ==========
     
@@ -257,6 +265,8 @@ contract DEXRouter {
         
         // Ejecutar los swaps secuencialmente
         _swap(amounts, path, to);
+        emit Swap(msg.sender, path[0], path[path.length - 1], amounts[0], amounts[amounts.length - 1]);
+        
     }
     
     // TODO: function swapTokensForExactTokens(
@@ -298,6 +308,8 @@ contract DEXRouter {
         
         // Ejecutar los swaps secuencialmente
         _swap(amounts, path, to);
+
+        emit Swap(msg.sender, path[0], path[path.length - 1], amounts[0], amounts[amounts.length - 1]);
     }
     
     // ========== FUNCIONES HELPER PRIVADAS ==========
