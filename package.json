@@ -6,9 +6,9 @@
     "scripts": {
         "compile": "hardhat compile",
         "test": "hardhat test",
-        "deploy": "hardhat run scripts/deploy.js",
-        "interact": "hardhat run scripts/interact.js",
-        "mint": "hardhat run scripts/mint-tokens.js",
+        "deploy": "hardhat run scripts/deploy.js --network localhost",
+        "interact": "hardhat run scripts/interact.js --network localhost",
+        "mint": "hardhat run scripts/mint-tokens.js --network localhost",
         "node": "hardhat node",
         "frontend": "cd frontend && cd frontend-react && npm start",
         "react": "cd frontend-react && npm start"
