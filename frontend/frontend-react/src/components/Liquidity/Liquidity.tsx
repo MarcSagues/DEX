@@ -9,9 +9,11 @@ interface LiquidityProps {
     connected: boolean;
     wallet: string | null;
     signer: any;
+    chainId: number | null;
+    onAddToken?: (address: string, symbol: string, decimals?: number) => void;
 }
 
-const Liquidity: React.FC<LiquidityProps> = ({ connected, wallet, signer }) => {
+const Liquidity: React.FC<LiquidityProps> = ({ connected, wallet, signer, chainId, onAddToken }) => {
     const [activeTab, setActiveTab] = useState<Tab>('add');
 
     const tabs = [
@@ -23,13 +25,13 @@ const Liquidity: React.FC<LiquidityProps> = ({ connected, wallet, signer }) => {
     const renderContent = () => {
         switch (activeTab) {
             case 'add':
-                return <AddLiquidity connected={connected} wallet={wallet} signer={signer} />;
+                return <AddLiquidity connected={connected} wallet={wallet} signer={signer} chainId={chainId} onAddToken={onAddToken} />;
             case 'my-pools':
-                return <MyPools connected={connected} wallet={wallet} signer={signer} onNavigate={(t) => setActiveTab(t)} />;
+                return <MyPools connected={connected} wallet={wallet} signer={signer} chainId={chainId} onAddToken={onAddToken} onNavigate={(t) => setActiveTab(t)} />;
             case 'remove':
-                return <RemoveLiquidity connected={connected} wallet={wallet} signer={signer} />;
+                return <RemoveLiquidity connected={connected} wallet={wallet} signer={signer} chainId={chainId} onAddToken={onAddToken} />;
             default:
-                return <AddLiquidity connected={connected} wallet={wallet} signer={signer} />;
+                return <AddLiquidity connected={connected} wallet={wallet} signer={signer} chainId={chainId} onAddToken={onAddToken} />;
         }
     };
 

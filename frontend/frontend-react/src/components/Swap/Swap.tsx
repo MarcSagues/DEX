@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContracts } from '../../hooks/useContracts';
+import { useContracts, getAddresses } from '../../hooks/useContracts';
 import { useBalances } from '../../hooks/useBalances';
 import { usePriceCalculation } from '../../hooks/usePriceCalculation';
 import { Contract } from 'ethers';
@@ -11,6 +11,8 @@ interface SwapProps {
     connected: boolean;
     signer: any;
     wallet: string | null;
+    chainId: number | null;
+    onAddToken?: (address: string, symbol: string, decimals?: number) => void;
 }
 
 // Interfaz para tipar el retorno de useContracts
@@ -26,7 +28,7 @@ interface Contracts {
     getPair: (address: string) => Contract;
 }
 
-const Swap: React.FC<SwapProps> = ({ connected, signer, wallet }) => {
+const Swap: React.FC<SwapProps> = ({ connected, signer, wallet, chainId, onAddToken }) => {
     // Estados básicos de UI
     const [fromToken, setFromToken] = React.useState('USDC');
     const [toToken, setToToken] = React.useState('DAI');
@@ -35,7 +37,7 @@ const Swap: React.FC<SwapProps> = ({ connected, signer, wallet }) => {
     const [inputMode, setInputMode] = React.useState<'from' | 'to'>('from');
 
     // Obtener instancias de contratos
-    const contracts = useContracts(signer) as Contracts | null;
+    const contracts = useContracts(signer, chainId as any) as Contracts | null;
 
     const tokens = contracts?.tokens ? Object.keys(contracts.tokens) : ['USDC', 'DAI', 'USDT'];
 
@@ -48,7 +50,7 @@ const Swap: React.FC<SwapProps> = ({ connected, signer, wallet }) => {
     );
 
     // Hook personalizado: Calcular precio (expondrá dos funciones)
-    const { getOutputAmount, getInputAmount, swapRate, priceImpact } = usePriceCalculation(contracts, fromToken, toToken);
+    const { getOutputAmount, getInputAmount, swapRate, priceImpact } = usePriceCalculation(contracts, fromToken, toToken, chainId);
 
     // Solo calcula el campo contrario cuando el usuario edita ese campo
     // Límite máximo para evitar valores imposibles
@@ -197,8 +199,19 @@ const Swap: React.FC<SwapProps> = ({ connected, signer, wallet }) => {
                                 className="flex-1 bg-transparent text-2xl font-bold text-gray-800 focus:outline-none"
                             />
                         </div>
-                        <div className="text-right text-sm text-gray-500 mt-2">
-                            Balance: {parseFloat(fromBalance).toFixed(4)} {fromToken}
+                        <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
+                            <button 
+                                onClick={() => {
+                                    const addresses = getAddresses(chainId as number);
+                                    const addr = (addresses.tokens as any)[fromToken];
+                                    onAddToken?.(addr, fromToken);
+                                }}
+                                className="flex items-center gap-1 hover:text-purple-600 transition"
+                                title="Añadir a MetaMask"
+                            >
+                                🦊 Importar {fromToken}
+                            </button>
+                            <span>Balance: {parseFloat(fromBalance).toFixed(4)} {fromToken}</span>
                         </div>
                     </div>
                 </div>
@@ -248,8 +261,19 @@ const Swap: React.FC<SwapProps> = ({ connected, signer, wallet }) => {
                                 className="flex-1 bg-transparent text-2xl font-bold text-gray-800 focus:outline-none"
                             />
                         </div>
-                        <div className="text-right text-sm text-gray-500 mt-2">
-                            Balance: {parseFloat(toBalance).toFixed(4)} {toToken}
+                        <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
+                            <button 
+                                onClick={() => {
+                                    const addresses = getAddresses(chainId as number);
+                                    const addr = (addresses.tokens as any)[toToken];
+                                    onAddToken?.(addr, toToken);
+                                }}
+                                className="flex items-center gap-1 hover:text-purple-600 transition"
+                                title="Añadir a MetaMask"
+                            >
+                                🦊 Importar {toToken}
+                            </button>
+                            <span>Balance: {parseFloat(toBalance).toFixed(4)} {toToken}</span>
                         </div>
                     </div>
                 </div>

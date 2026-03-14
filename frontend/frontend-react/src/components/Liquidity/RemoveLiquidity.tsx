@@ -8,10 +8,12 @@ interface RemoveLiquidityProps {
     connected: boolean;
     wallet: string | null;
     signer: any;
+    chainId: number | null;
+    onAddToken?: (address: string, symbol: string, decimals?: number) => void;
 }
 
-const RemoveLiquidity: React.FC<RemoveLiquidityProps> = ({ connected, wallet, signer }) => {
-    const contracts = useContracts(signer) as any;
+const RemoveLiquidity: React.FC<RemoveLiquidityProps> = ({ connected, wallet, signer, chainId, onAddToken }) => {
+    const contracts = useContracts(signer, chainId as any) as any;
     const { getUserPools, loadingPools, userPools } = usePools();
     const { removeLiquidity, loading, error } = useLiquidity();
 

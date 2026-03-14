@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Contract, formatUnits, parseUnits } from 'ethers';
-import { addresses } from './useContracts';
+import { getAddresses } from './useContracts';
 
 interface Contracts {
     router: Contract;
@@ -17,13 +17,14 @@ interface Contracts {
  * @param contracts - Instancias de los contratos
  * @param fromToken - Token origen
  * @param toToken - Token destino
- * @param inputAmount - Cantidad a intercambiar
+ * @param chainId - ID de la cadena conectada
  * @returns Precio calculado, tasa de cambio, impacto en precio
  */
 export function usePriceCalculation(
     contracts: Contracts | null,
     fromToken: string,
-    toToken: string
+    toToken: string,
+    chainId: number | null
 ) {
     const [swapRate, setSwapRate] = useState('0');
     const [priceImpact, setPriceImpact] = useState('0');
@@ -46,6 +47,7 @@ export function usePriceCalculation(
                     setLoading(false);
                     return;
                 }
+                const addresses = getAddresses(chainId);
                 const tokenInAddress = addresses.tokens[fromToken as keyof typeof addresses.tokens];
                 const tokenOutAddress = addresses.tokens[toToken as keyof typeof addresses.tokens];
                 const pairAddress = await contracts.factory.getPair(tokenInAddress, tokenOutAddress);
@@ -139,6 +141,7 @@ export function usePriceCalculation(
         if (fromToken === toToken) return inputAmount;
         if (!contracts) return '';
         try {
+            const addresses = getAddresses(chainId);
             // Obtener direcciones de tokens
             const tokenInAddress = addresses.tokens[fromToken as keyof typeof addresses.tokens];
             const tokenOutAddress = addresses.tokens[toToken as keyof typeof addresses.tokens];
@@ -167,6 +170,7 @@ export function usePriceCalculation(
         if (fromToken === toToken) return outputAmount;
         if (!contracts) return '';
         try {
+            const addresses = getAddresses(chainId);
             // Obtener direcciones de tokens
             const tokenInAddress = addresses.tokens[fromToken as keyof typeof addresses.tokens];
             const tokenOutAddress = addresses.tokens[toToken as keyof typeof addresses.tokens];

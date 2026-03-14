@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ethers } from 'ethers';
+import { getAddresses } from './hooks/useContracts';
 import Sidebar from './components/Layout/Sidebar';
 import MainLayout from './components/Layout/MainLayout';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -14,10 +15,35 @@ const App: React.FC = () => {
     const [wallet, setWallet] = React.useState<string | null>(null);
     const [balance, setBalance] = React.useState<string | null>(null);
     const [signer, setSigner] = React.useState<any>(null);
+    const [chainId, setChainId] = React.useState<number | null>(null);
     const [ethersProvider, setEthersProvider] = React.useState<any>(null);
     const [currentPage, setCurrentPage] = React.useState<Page>('dashboard');
     const [showWalletSelector, setShowWalletSelector] = useState(false);
     const [availableWallets, setAvailableWallets] = useState<any[]>([]);
+    const [networkName, setNetworkName] = useState<string>('Desconocida');
+
+    // Escuchar cambios en la red o cuenta
+    React.useEffect(() => {
+        if (window.ethereum) {
+            const handleChainChanged = () => window.location.reload();
+            const handleAccountsChanged = () => window.location.reload();
+
+            window.ethereum.on('chainChanged', handleChainChanged);
+            window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+            return () => {
+                window.ethereum.removeListener('chainChanged', handleChainChanged);
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+            };
+        }
+    }, []);
+
+    const getNetworkName = (id: number) => {
+        if (id === 11155111) return 'Sepolia';
+        if (id === 31337) return 'Localhost';
+        if (id === 1) return 'Ethereum Mainnet';
+        return `Red ID: ${id}`;
+    };
 
     const connectWallet = async () => {
         try {
@@ -61,13 +87,17 @@ const App: React.FC = () => {
             const ethersProvider = new ethers.BrowserProvider(provider);
             const signerInstance = await ethersProvider.getSigner();
             const address = await signerInstance.getAddress();
+            const network = await ethersProvider.getNetwork();
+            const currentChainId = Number(network.chainId);
 
-            console.log('✅ Conectado:', address);
+            console.log('✅ Conectado:', address, 'ChainId:', currentChainId);
 
 
             setConnected(true);
             setWallet(address);
             setSigner(signerInstance);
+            setChainId(currentChainId);
+            setNetworkName(getNetworkName(currentChainId));
             setEthersProvider(ethersProvider);
 
             const balance = await ethersProvider.getBalance(address);
@@ -82,16 +112,35 @@ const App: React.FC = () => {
         }
     };
 
+    const addTokenToWallet = async (address: string, symbol: string, decimals: number = 18) => {
+        if (!window.ethereum) return;
+        try {
+            await window.ethereum.request({
+                method: 'wallet_watchAsset',
+                params: {
+                    type: 'ERC20',
+                    options: {
+                        address,
+                        symbol,
+                        decimals,
+                    },
+                },
+            });
+        } catch (error) {
+            console.error('Error adding token to wallet:', error);
+        }
+    };
+
     const renderPage = () => {
         switch (currentPage) {
             case 'dashboard':
-                return <Dashboard connected={connected} wallet={wallet} balance={balance} provider={ethersProvider} />;
+                return <Dashboard connected={connected} wallet={wallet} balance={balance} provider={ethersProvider} chainId={chainId} />;
             case 'swap':
-                return <Swap connected={connected} signer={signer} wallet={wallet} />;
+                return <Swap connected={connected} signer={signer} wallet={wallet} chainId={chainId} onAddToken={addTokenToWallet} />;
             case 'liquidity':
-                return <Liquidity connected={connected} wallet={wallet} signer={signer} />;
+                return <Liquidity connected={connected} wallet={wallet} signer={signer} chainId={chainId} onAddToken={addTokenToWallet} />;
             default:
-                return <Dashboard connected={connected} wallet={wallet} balance={balance} provider={ethersProvider} />;
+                return <Dashboard connected={connected} wallet={wallet} balance={balance} provider={ethersProvider} chainId={chainId} />;
         }
     };
 
@@ -107,6 +156,8 @@ const App: React.FC = () => {
                 balance={balance}
                 onConnectWallet={connectWallet}
                 currentPage={currentPage}
+                chainId={chainId}
+                networkName={networkName}
             >
                 {renderPage()}
             </MainLayout>

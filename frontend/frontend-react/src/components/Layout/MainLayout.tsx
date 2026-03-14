@@ -7,6 +7,8 @@ interface MainLayoutProps {
     balance: string | null;
     onConnectWallet: () => void;
     currentPage: 'dashboard' | 'swap' | 'liquidity';
+    chainId: number | null;
+    networkName: string;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({
@@ -15,7 +17,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     wallet,
     balance,
     onConnectWallet,
-    currentPage
+    currentPage,
+    chainId,
+    networkName
 }) => {
     const pageNames = {
         dashboard: '📊 Dashboard',
@@ -44,6 +48,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
 
                     {/* Wallet Section */}
                     <div className="flex items-center gap-4">
+                        {connected && (
+                            <div className={`px-3 py-1 rounded-full text-xs font-bold border ${chainId === 11155111 ? 'bg-purple-500/20 border-purple-400 text-purple-200' : 'bg-blue-500/20 border-blue-400 text-blue-200'}`}>
+                                🌐 {networkName}
+                            </div>
+                        )}
                         {connected && wallet ? (
                             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-lg rounded-xl px-4 py-2 border border-white/20">
                                 <div className="text-right">

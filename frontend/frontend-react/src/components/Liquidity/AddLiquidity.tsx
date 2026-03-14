@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { formatUnits, parseUnits } from 'ethers';
-import { useContracts } from '../../hooks/useContracts';
+import { useContracts, getAddresses } from '../../hooks/useContracts';
 import { useBalances } from '../../hooks/useBalances';
 import { useLiquidity } from '../../hooks/useLiquidity';
 import { usePools } from '../../hooks/usePools';
@@ -9,9 +9,11 @@ interface AddLiquidityProps {
     connected: boolean;
     wallet: string | null;
     signer: any;
+    chainId: number | null;
+    onAddToken?: (address: string, symbol: string, decimals?: number) => void;
 }
 
-const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer }) => {
+const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, chainId, onAddToken }) => {
     const [tokenA, setTokenA] = useState('USDC');
     const [tokenB, setTokenB] = useState('DAI');
     const [amountA, setAmountA] = useState('');
@@ -20,7 +22,7 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer }
     const [poolShare, setPoolShare] = useState('0');
     const [inputMode, setInputMode] = useState<'A' | 'B'>('A');
 
-    const contracts = useContracts(signer) as any;
+    const contracts = useContracts(signer, chainId as any) as any;
     const { fromBalance: balanceA, toBalance: balanceB } = useBalances(contracts, wallet, tokenA, tokenB);
     const { addLiquidity, approveTokens, loading, error } = useLiquidity();
     const { quoteAddLiquidity } = usePools();
@@ -148,7 +150,19 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer }
             <div className="bg-gray-800/50 rounded-xl p-6">
                 <div className="flex justify-between items-center mb-3">
                     <label className="text-gray-400 text-sm">Token A</label>
-                    <span className="text-gray-400 text-sm">Balance: {parseFloat(balanceA).toFixed(4)}</span>
+                    <div className="flex items-center gap-3">
+                        <button 
+                            onClick={() => {
+                                const addresses = getAddresses(chainId as number);
+                                const addr = (addresses.tokens as any)[tokenA];
+                                onAddToken?.(addr, tokenA);
+                            }}
+                            className="text-xs text-purple-400 hover:text-purple-300 transition flex items-center gap-1"
+                        >
+                            🦊 Import {tokenA}
+                        </button>
+                        <span className="text-gray-400 text-sm">Balance: {parseFloat(balanceA).toFixed(4)}</span>
+                    </div>
                 </div>
                 <div className="flex gap-4">
                     <select
@@ -186,7 +200,19 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer }
             <div className="bg-gray-800/50 rounded-xl p-6">
                 <div className="flex justify-between items-center mb-3">
                     <label className="text-gray-400 text-sm">Token B</label>
-                    <span className="text-gray-400 text-sm">Balance: {parseFloat(balanceB).toFixed(4)}</span>
+                    <div className="flex items-center gap-3">
+                        <button 
+                            onClick={() => {
+                                const addresses = getAddresses(chainId as number);
+                                const addr = (addresses.tokens as any)[tokenB];
+                                onAddToken?.(addr, tokenB);
+                            }}
+                            className="text-xs text-purple-400 hover:text-purple-300 transition flex items-center gap-1"
+                        >
+                            🦊 Import {tokenB}
+                        </button>
+                        <span className="text-gray-400 text-sm">Balance: {parseFloat(balanceB).toFixed(4)}</span>
+                    </div>
                 </div>
                 <div className="flex gap-4">
                     <select

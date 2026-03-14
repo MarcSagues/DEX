@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Contract } from 'ethers';
-import { addresses } from './useContracts';
+import { getAddresses } from './useContracts';
 import RouterABI from '../contracts/RouterABI';
 
 export interface WalletSwap {
@@ -17,17 +17,19 @@ export interface WalletSwap {
  * Hook para leer el historial real de swaps de la wallet conectada usando eventos de la blockchain
  * @param wallet Dirección de la wallet conectada
  * @param provider Instancia de ethers.js provider
+ * @param chainId ID de la cadena conectada
  */
-export function useWalletSwapHistory(wallet: string | null, provider: any) {
+export function useWalletSwapHistory(wallet: string | null, provider: any, chainId: number | null) {
   const [swaps, setSwaps] = useState<WalletSwap[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!wallet || !provider) return;
+    if (!wallet || !provider || !chainId) return;
 
     const fetchSwaps = async () => {
       setLoading(true);
       try {
+        const addresses = getAddresses(chainId);
         // 1️⃣ Instanciar el contrato Router
         const router = new Contract(addresses.router, RouterABI, provider);
 

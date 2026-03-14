@@ -1,15 +1,21 @@
 import React from 'react';
 import { useWalletSwapHistory } from '../../hooks/useWalletSwapHistory';
 import SwapHistory from '../SwapHistory';
+import AddressDirectory from './AddressDirectory';
+import { getAddresses } from '../../hooks/useContracts';
 
 interface DashboardProps {
     connected: boolean;
     wallet: string | null;
     balance: string | null;
     provider: any; // ethers provider
+    chainId: number | null;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ connected, wallet, balance, provider }) => {
+const Dashboard: React.FC<DashboardProps> = ({ connected, wallet, balance, provider, chainId }) => {
+    // Obtener direcciones para mostrar en el directorio
+    const addresses = chainId ? getAddresses(chainId) : null;
+
     const stats = [
         {
             title: 'Balance Total',
@@ -39,7 +45,7 @@ const Dashboard: React.FC<DashboardProps> = ({ connected, wallet, balance, provi
 
 
 
-    const { swaps } = useWalletSwapHistory(wallet, provider);
+    const { swaps } = useWalletSwapHistory(wallet, provider, chainId);
 
     return (
         <div className="space-y-6">
@@ -112,6 +118,11 @@ const Dashboard: React.FC<DashboardProps> = ({ connected, wallet, balance, provi
                         📜 Actividad Reciente
                     </h2>
                     <SwapHistory history={swaps} />
+                </div>
+
+                {/* Directorio de Direcciones */}
+                <div className="lg:col-span-2">
+                    <AddressDirectory addresses={addresses} />
                 </div>
             </div>
         </div>

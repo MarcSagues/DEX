@@ -6,11 +6,13 @@ interface MyPoolsProps {
     connected: boolean;
     wallet: string | null;
     signer: any;
-    onNavigate?: (tab: 'add' | 'my-pools' | 'remove') => void;
+    chainId: number | null;
+    onAddToken?: (address: string, symbol: string, decimals?: number) => void;
+    onNavigate: (tab: 'add' | 'my-pools' | 'remove') => void;
 }
 
-const MyPools: React.FC<MyPoolsProps> = ({ connected, wallet, signer, onNavigate }) => {
-    const contracts = useContracts(signer) as any;
+const MyPools: React.FC<MyPoolsProps> = ({ connected, wallet, signer, chainId, onAddToken, onNavigate }) => {
+    const contracts = useContracts(signer, chainId as any) as any;
     const { getUserPools, loadingPools: loading, userPools: pools } = usePools();
 
     useEffect(() => {
@@ -96,20 +98,23 @@ const MyPools: React.FC<MyPoolsProps> = ({ connected, wallet, signer, onNavigate
 
                     <div className="flex gap-3">
                         <button
-                            onClick={() => {
-                                if (onNavigate) onNavigate('add');
-                            }}
-                            className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all"
+                            onClick={() => onNavigate('add')}
+                            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition"
                         >
-                            ➕ Add More
+                            Add
                         </button>
                         <button
-                            onClick={() => {
-                                if (onNavigate) onNavigate('remove');
-                            }}
-                            className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all"
+                            onClick={() => onNavigate('remove')}
+                            className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition"
                         >
-                            ➖ Remove
+                            Remove
+                        </button>
+                        <button
+                            onClick={() => onAddToken?.(pool.pairAddress, `DEX-LP-${pool.token0Symbol}-${pool.token1Symbol}`)}
+                            className="bg-white/10 hover:bg-white/20 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2"
+                            title="Añadir LP a MetaMask"
+                        >
+                            <span>🦊</span> <span className="text-xs">Import LP</span>
                         </button>
                     </div>
                 </div>

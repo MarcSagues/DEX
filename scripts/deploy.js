@@ -49,16 +49,16 @@ async function main() {
   // 5. Mintear tokens iniciales al deployer
   console.log("🪙 Minteando tokens iniciales...");
   const initialAmount = ethers.parseUnits("100000", 18); // 100,000 tokens
-  await usdc.mint(deployer.address, initialAmount);
-  await dai.mint(deployer.address, initialAmount);
-  await usdt.mint(deployer.address, initialAmount);
+  await (await usdc.mint(deployer.address, initialAmount)).wait();
+  await (await dai.mint(deployer.address, initialAmount)).wait();
+  await (await usdt.mint(deployer.address, initialAmount)).wait();
   console.log("✅ Minteados 100,000 de cada token al deployer\n");
 
   // 6. Crear pares
   console.log("👥 Creando pares...");
-  await factory.createPair(usdcAddress, daiAddress);
-  await factory.createPair(usdcAddress, usdtAddress);
-  await factory.createPair(daiAddress, usdtAddress);
+  await (await factory.createPair(usdcAddress, daiAddress)).wait();
+  await (await factory.createPair(usdcAddress, usdtAddress)).wait();
+  await (await factory.createPair(daiAddress, usdtAddress)).wait();
   
   const pairUSDC_DAI = await factory.getPair(usdcAddress, daiAddress);
   const pairUSDC_USDT = await factory.getPair(usdcAddress, usdtAddress);
@@ -69,16 +69,18 @@ async function main() {
   console.log("✅ Par DAI/USDT:", pairDAI_USDT, "\n");
 
   // 7. Añadir liquidez inicial
-  console.log("💧 Añadiendo liquidez inicial...");
+  console.log("💧 Añadiendo liquidez inicial (esto puede tardar un poco)...");
   const liquidityAmount = ethers.parseUnits("10000", 18); // 10,000 tokens
   
   // Aprobar tokens al router
-  await usdc.approve(routerAddress, ethers.parseUnits("30000", 18));
-  await dai.approve(routerAddress, ethers.parseUnits("20000", 18));
-  await usdt.approve(routerAddress, ethers.parseUnits("20000", 18));
+  console.log("🔓 Aprobando tokens...");
+  await (await usdc.approve(routerAddress, ethers.parseUnits("30000", 18))).wait();
+  await (await dai.approve(routerAddress, ethers.parseUnits("20000", 18))).wait();
+  await (await usdt.approve(routerAddress, ethers.parseUnits("20000", 18))).wait();
   
   // Añadir liquidez USDC/DAI
-  await router.addLiquidity(
+  console.log("➕ Añadiendo liquidez USDC/DAI...");
+  const tx1 = await router.addLiquidity(
     usdcAddress,
     daiAddress,
     liquidityAmount,
@@ -87,10 +89,12 @@ async function main() {
     0,
     deployer.address
   );
+  await tx1.wait();
   console.log("✅ Liquidez añadida a USDC/DAI");
   
   // Añadir liquidez USDC/USDT
-  await router.addLiquidity(
+  console.log("➕ Añadiendo liquidez USDC/USDT...");
+  const tx2 = await router.addLiquidity(
     usdcAddress,
     usdtAddress,
     liquidityAmount,
@@ -99,10 +103,12 @@ async function main() {
     0,
     deployer.address
   );
+  await tx2.wait();
   console.log("✅ Liquidez añadida a USDC/USDT");
   
   // Añadir liquidez DAI/USDT
-  await router.addLiquidity(
+  console.log("➕ Añadiendo liquidez DAI/USDT...");
+  const tx3 = await router.addLiquidity(
     daiAddress,
     usdtAddress,
     liquidityAmount,
@@ -111,6 +117,7 @@ async function main() {
     0,
     deployer.address
   );
+  await tx3.wait();
   console.log("✅ Liquidez añadida a DAI/USDT\n");
 
   // 8. Guardar direcciones y ABIs para React
@@ -132,13 +139,14 @@ async function main() {
   };
   
   // Guardar direcciones
+  const networkName = hre.network.name;
   const frontendDir = path.join(__dirname, "..", "frontend", "frontend-react", "src", "contracts");
   if (!fs.existsSync(frontendDir)) {
     fs.mkdirSync(frontendDir, { recursive: true });
   }
   
   fs.writeFileSync(
-    path.join(frontendDir, "addresses.json"),
+    path.join(frontendDir, `addresses-${networkName}.json`),
     JSON.stringify(config, null, 2)
   );
   
