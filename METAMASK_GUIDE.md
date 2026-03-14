@@ -1,92 +1,92 @@
-# 🦊 Guía de Configuración de MetaMask para el DEX
+# 🦊 MetaMask Configuration Guide for the DEX
 
-## 📋 Prerrequisitos
+## 📋 Prerequisites
 
-1. **MetaMask instalado** en tu navegador ([Descargar aquí](https://metamask.io/))
-2. **Nodo de Hardhat corriendo** en `localhost:8545`
-
----
-
-## 🚀 Configuración Paso a Paso
-
-### 1️⃣ Añadir Red Local de Hardhat a MetaMask
-
-#### Opción A: Automática (Recomendada)
-1. Abre la interfaz del DEX en `http://localhost:3000`
-2. Haz clic en **"🦊 Conectar MetaMask"**
-3. MetaMask te pedirá automáticamente añadir la red Hardhat Local
-4. Acepta la solicitud
-
-#### Opción B: Manual
-1. Abre MetaMask
-2. Haz clic en el selector de red (arriba)
-3. Selecciona **"Añadir red"** → **"Añadir red manualmente"**
-4. Completa los campos:
-   - **Nombre de la red:** Hardhat Local
-   - **Nueva URL de RPC:** `http://localhost:8545`
-   - **ID de cadena:** `1337`
-   - **Símbolo de moneda:** `ETH`
-5. Haz clic en **"Guardar"**
+1. **MetaMask installed** in your browser ([Download here](https://metamask.io/))
+2. **Hardhat node running** at `localhost:8545`
 
 ---
 
-### 2️⃣ Importar Cuentas de Hardhat
+## 🚀 Step-by-Step Configuration
 
-Hardhat proporciona 20 cuentas de prueba con 10,000 ETH cada una.
+### 1️⃣ Add Hardhat Local Network to MetaMask
 
-#### Importar Cuenta #0 (Recomendada)
-1. Abre MetaMask
-2. Haz clic en el icono de cuenta (arriba derecha)
-3. Selecciona **"Importar cuenta"**
-4. Pega esta clave privada:
+#### Option A: Automatic (Recommended)
+1. Open the DEX interface at `http://localhost:3000`
+2. Click on **"🦊 Connect MetaMask"**
+3. MetaMask will automatically ask to add the Hardhat Local network
+4. Accept the request
+
+#### Option B: Manual
+1. Open MetaMask
+2. Click on the network selector (top)
+3. Select **"Add network"** → **"Add a network manually"**
+4. Fill in the fields:
+   - **Network name:** Hardhat Local
+   - **New RPC URL:** `http://localhost:8545`
+   - **Chain ID:** `1337`
+   - **Currency symbol:** `ETH`
+5. Click **"Save"**
+
+---
+
+### 2️⃣ Import Hardhat Accounts
+
+Hardhat provides 20 test accounts with 10,000 ETH each.
+
+#### Import Account #0 (Recommended)
+1. Open MetaMask
+2. Click on the account icon (top right)
+3. Select **"Import account"**
+4. Paste this private key:
    ```
    0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
    ```
-5. Haz clic en **"Importar"**
+5. Click **"Import"**
 
-#### Otras Cuentas Disponibles
+#### Other Available Accounts
 
-**Cuenta #1:**
+**Account #1:**
 ```
 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
 ```
 
-**Cuenta #2:**
+**Account #2:**
 ```
 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
 ```
 
-**Cuenta #3:**
+**Account #3:**
 ```
 0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6
 ```
 
-⚠️ **IMPORTANTE:** Estas claves son SOLO para desarrollo local. NUNCA uses estas cuentas en redes reales.
+⚠️ **IMPORTANT:** These keys are ONLY for local development. NEVER use these accounts on real networks.
 
 ---
 
-### 3️⃣ Obtener Tokens de Prueba
+### 3️⃣ Obtain Test Tokens
 
-Para usar el DEX necesitas Token A y Token B:
+To use the DEX you need Token A and Token B:
 
-#### Opción 1: Desde la consola de Hardhat
+#### Option 1: From the Hardhat console
 ```bash
 npx hardhat console --network localhost
 ```
 
-Luego ejecuta:
+Then run:
 ```javascript
 const MockERC20 = await ethers.getContractFactory("MockERC20");
 const tokenA = await MockERC20.attach("0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf");
 const tokenB = await MockERC20.attach("0x9d4454B023096f34B160D6B654540c56A1F81688");
 
-// Mintear 1000 tokens de cada tipo a tu dirección
-await tokenA.mint("TU_DIRECCION_AQUI", ethers.parseEther("1000"));
-await tokenB.mint("TU_DIRECCION_AQUI", ethers.parseEther("1000"));
+// Mint 1000 tokens of each type to your address
+await tokenA.mint("YOUR_ADDRESS_HERE", ethers.parseEther("1000"));
+await tokenB.mint("YOUR_ADDRESS_HERE", ethers.parseEther("1000"));
 ```
 
-#### Opción 2: Usar el script de minteo
-Crea un archivo `scripts/mint-tokens.js`:
+#### Option 2: Use the minting script
+Create a file `scripts/mint-tokens.js`:
 ```javascript
 const hre = require("hardhat");
 
@@ -106,114 +106,114 @@ async function main() {
   await tokenA.mint(address, hre.ethers.parseEther("1000"));
   await tokenB.mint(address, hre.ethers.parseEther("1000"));
   
-  console.log("✅ 1000 Token A y 1000 Token B minteados a", address);
+  console.log("✅ 1000 Token A and 1000 Token B minted to", address);
 }
 
 main().catch(console.error);
 ```
 
-Ejecuta:
+Run:
 ```bash
 npx hardhat run scripts/mint-tokens.js --network localhost
 ```
 
 ---
 
-### 4️⃣ Añadir Tokens a MetaMask
+### 4️⃣ Add Tokens to MetaMask
 
-Para ver tus balances de Token A y Token B:
+To see your Token A and Token B balances:
 
-1. Abre MetaMask
-2. Ve a la pestaña **"Tokens"**
-3. Haz clic en **"Importar tokens"**
-4. Selecciona **"Token personalizado"**
-5. Pega la dirección del contrato:
+1. Open MetaMask
+2. Go to the **"Tokens"** tab
+3. Click on **"Import tokens"**
+4. Select **"Custom token"**
+5. Paste the contract address:
    - **Token A:** `0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf`
    - **Token B:** `0x9d4454B023096f34B160D6B654540c56A1F81688`
-6. El símbolo y decimales se completarán automáticamente
-7. Haz clic en **"Añadir token personalizado"** → **"Importar tokens"**
+6. The symbol and decimals will auto-fill
+7. Click **"Add custom token"** → **"Import tokens"**
 
 ---
 
-## 🎯 Usar el DEX
+## 🎯 Using the DEX
 
-### Conectar Wallet
-1. Abre `http://localhost:3000`
-2. Haz clic en **"🦊 Conectar MetaMask"**
-3. Autoriza la conexión en MetaMask
-4. ¡Listo! Tu wallet está conectada
+### Connect Wallet
+1. Open `http://localhost:3000`
+2. Click on **"🦊 Connect MetaMask"**
+3. Authorize the connection in MetaMask
+4. Ready! Your wallet is connected
 
-### Hacer un Swap
-1. Selecciona el token de entrada
-2. Ingresa la cantidad
-3. Selecciona el token de salida
-4. Haz clic en **"Swap"**
-5. Confirma la transacción en MetaMask (2 transacciones: aprobar + swap)
+### Make a Swap
+1. Select the input token
+2. Enter the amount
+3. Select the output token
+4. Click **"Swap"**
+5. Confirm the transaction in MetaMask (2 transactions: approve + swap)
 
-### Añadir Liquidez
-1. Ingresa las cantidades de Token A y Token B
-2. Haz clic en **"Añadir Liquidez"**
-3. Confirma las transacciones en MetaMask (3 transacciones: aprobar A + aprobar B + añadir liquidez)
-4. Recibirás LP tokens
+### Add Liquidity
+1. Enter the amounts for Token A and Token B
+2. Click **"Add Liquidity"**
+3. Confirm the transactions in MetaMask (3 transactions: approve A + approve B + add liquidity)
+4. You will receive LP tokens
 
-### Remover Liquidez
-1. Ingresa la cantidad de LP tokens
-2. Haz clic en **"Remover Liquidez"**
-3. Confirma las transacciones en MetaMask
-4. Recibirás de vuelta tus Token A y Token B
+### Remove Liquidity
+1. Enter the amount of LP tokens
+2. Click **"Remove Liquidity"**
+3. Confirm the transactions in MetaMask
+4. You will receive back your Token A and Token B
 
 ---
 
 ## 🔧 Troubleshooting
 
-### "MetaMask no está instalado"
-- Instala MetaMask desde [metamask.io](https://metamask.io/)
-- Recarga la página
+### "MetaMask is not installed"
+- Install MetaMask from [metamask.io](https://metamask.io/)
+- Reload the page
 
-### "Error al conectar a la red"
-- Verifica que el nodo de Hardhat esté corriendo: `npm run node`
-- Verifica que la URL RPC sea `http://localhost:8545`
-- Verifica que el Chain ID sea `1337`
+### "Error connecting to the network"
+- Verify that the Hardhat node is running: `npm run node`
+- Verify that the RPC URL is `http://localhost:8545`
+- Verify that the Chain ID is `1337`
 
-### "Balance insuficiente"
-- Mintea tokens usando los scripts de arriba
-- Verifica que estés en la cuenta correcta
+### "Insufficient balance"
+- Mint tokens using the scripts above
+- Verify that you are on the correct account
 
 ### "Transaction failed"
-- Asegúrate de tener suficientes tokens
-- Verifica que el pool tenga liquidez
-- Intenta con una cantidad menor
+- Ensure you have enough tokens
+- Verify that the pool has liquidity
+- Try with a smaller amount
 
 ### "Nonce too high"
-- En MetaMask: Configuración → Avanzado → Restablecer cuenta
+- In MetaMask: Settings → Advanced → Clear activity tab data (or Reset account)
 
 ---
 
-## 📱 Interfaces Disponibles
+## 📱 Available Interfaces
 
-- **Frontend Web:** `http://localhost:3000`
-- **Nodo Hardhat:** `http://localhost:8545`
+- **Web Frontend:** `http://localhost:3000`
+- **Hardhat Node:** `http://localhost:8545`
 - **Hardhat Console:** `npx hardhat console --network localhost`
 
 ---
 
 ## ✨ Tips
 
-1. **Gas gratis:** En Hardhat local no hay costos reales de gas
-2. **Reset:** Si algo sale mal, reinicia el nodo: `Ctrl+C` y `npm run node`
-3. **Múltiples cuentas:** Importa varias cuentas para probar transferencias
-4. **Explorador:** Los logs aparecen en la terminal donde corre el nodo
+1. **Free Gas:** In local Hardhat there are no real gas costs
+2. **Reset:** If something goes wrong, restart the node: `Ctrl+C` and `npm run node`
+3. **Multiple Accounts:** Import several accounts to test transfers
+4. **Explorer:** Logs appear in the terminal where the node is running
 
 ---
 
-## 🔐 Seguridad
+## 🔐 Security
 
-⚠️ **ADVERTENCIA:**
-- Estas claves privadas son PÚBLICAS
-- SOLO para desarrollo local
-- NUNCA envíes ETH real a estas direcciones
-- NUNCA uses estas claves en mainnet o testnets públicas
+⚠️ **WARNING:**
+- These private keys are PUBLIC
+- ONLY for local development
+- NEVER send real ETH to these addresses
+- NEVER use these keys on mainnet or public testnets
 
 ---
 
-¡Disfruta usando tu DEX! 🚀
+¡Enjoy using your DEX! 🚀

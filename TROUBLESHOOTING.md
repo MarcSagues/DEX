@@ -1,101 +1,101 @@
-# 🔧 Solución al Error de Ethers.js
+# 🔧 Ethers.js Error Solutions
 
-## ✅ Cambios Realizados
+## ✅ Changes Implemented
 
-1. **Descargado Ethers.js localmente** → `frontend/ethers.min.js`
-2. **Actualizado el HTML** para cargar desde archivo local primero
-3. **Agregado fallback** al CDN si falla la carga local
-4. **Mejorado el sistema de reintentos** de carga
+1. **Downloaded Ethers.js locally** → `frontend/ethers.min.js`
+2. **Updated HTML** to load from the local file first
+3. **Added fallback** to the CDN if the local load fails
+4. **Improved the retry system** for loading
 
 ---
 
-## 📝 Pasos para Solucionar
+## 📝 Troubleshooting Steps
 
-### 1️⃣ Recarga el Navegador
+### 1️⃣ Reload the Browser
 
-Haz un **hard reload** en tu navegador:
+Perform a **hard reload** in your browser:
 
 - **Windows/Linux:** `Ctrl + Shift + R`
 - **Mac:** `Cmd + Shift + R`
 
-O también:
+Or also:
 - **Windows/Linux:** `Ctrl + F5`
 
-### 2️⃣ Verifica la Consola
+### 2️⃣ Check the Console
 
-Abre la consola del navegador (F12) y busca estos mensajes:
+Open the browser console (F12) and look for these messages:
 
-✅ **Correcto:**
+✅ **Correct:**
 ```
-✅ Ethers.js cargado exitosamente, versión: 5.7.2
-📱 Inicializando aplicación...
+✅ Ethers.js loaded successfully, version: 5.7.2
+📱 Initializing application...
 ```
 
 ❌ **Error:**
 ```
-Intento X/10 - Esperando a Ethers.js...
+Attempt X/10 - Waiting for Ethers.js...
 ```
 
-### 3️⃣ Si Aún No Funciona
+### 3️⃣ If It Still Doesn't Work
 
-#### Opción A: Limpiar Caché
-1. En Chrome/Edge: `Ctrl + Shift + Delete`
-2. Selecciona "Imágenes y archivos en caché"
-3. Haz clic en "Borrar datos"
-4. Recarga la página
+#### Option A: Clear Cache
+1. In Chrome/Edge: `Ctrl + Shift + Delete`
+2. Select "Cached images and files"
+3. Click "Clear data"
+4. Reload the page
 
-#### Opción B: Verificar el Archivo
+#### Option B: Verify the File
 ```bash
-# Verifica que el archivo exista
+# Verify that the file exists
 cd c:\Users\34655\Documents\Blockchain\DEX\frontend
 dir ethers.min.js
 ```
 
-Si no existe o es muy pequeño (menos de 100KB), descárgalo manualmente:
+If it doesn't exist or is very small (less than 100KB), download it manually:
 ```powershell
 Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js" -OutFile "ethers.min.js"
 ```
 
-#### Opción C: Usar Otro Navegador
-- Prueba en Chrome, Edge, Firefox o Brave
-- A veces un navegador tiene la caché corrupta
+#### Option C: Use Another Browser
+- Try in Chrome, Edge, Firefox, or Brave
+- Sometimes a browser has a corrupt cache
 
 ---
 
-## 🎯 Qué Esperar
+## 🎯 What to Expect
 
-Después de recargar correctamente, verás:
+After reloading correctly, you will see:
 
-1. **En la consola del navegador (F12):**
+1. **In the browser console (F12):**
    ```
-   Página cargada, verificando Ethers.js...
-   ✅ Ethers.js cargado exitosamente, versión: 5.7.2
-   📱 Inicializando aplicación...
-   MetaMask detectado (si tienes MetaMask)
+   Page loaded, verifying Ethers.js...
+   ✅ Ethers.js loaded successfully, version: 5.7.2
+   📱 Initializing application...
+   MetaMask detected (if you have MetaMask)
    ```
 
-2. **En la interfaz:**
-   - ✅ Estado de Red: "Desconectado" (hasta que conectes)
-   - ✅ Botón: "🦊 Conectar MetaMask" (o "Conectar Wallet")
-   - ✅ Contratos: Direcciones visibles en la parte inferior
+2. **In the interface:**
+   - ✅ Network Status: "Disconnected" (until you connect)
+   - ✅ Button: "🦊 Connect MetaMask" (or "Connect Wallet")
+   - ✅ Contracts: Addresses visible at the bottom
 
 ---
 
-## 🚀 Siguiente Paso
+## 🚀 Next Step
 
-Una vez que veas "✅ Ethers.js cargado exitosamente" en la consola:
+Once you see "✅ Ethers.js loaded successfully" in the console:
 
-1. Haz clic en **"🦊 Conectar MetaMask"**
-2. Acepta la conexión en MetaMask
-3. Si te pide añadir la red, acepta
-4. ¡Listo para usar el DEX!
-
----
-
-## 💡 Prevención
-
-Este archivo local (`ethers.min.js`) ahora está disponible, así que no deberías tener más problemas de carga incluso sin internet.
+1. Click on **"🦊 Connect MetaMask"**
+2. Accept the connection in MetaMask
+3. If it asks to add the network, accept
+4. Ready to use the DEX!
 
 ---
 
-**¿Sigue sin funcionar?** Avísame y buscaremos otra solución.
+## 💡 Prevention
+
+This local file (`ethers.min.js`) is now available, so you should not have more loading problems even without internet.
+
+---
+
+**Still not working?** Let me know and we will look for another solution.

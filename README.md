@@ -1,88 +1,88 @@
 # DEX - Decentralized Exchange
 
-Un DEX (Exchange Descentralizado) completo implementado con Solidity, similar a Uniswap V2. Utiliza el modelo AMM (Automated Market Maker) con la fórmula `x * y = k`.
+A complete Decentralized Exchange (DEX) implemented with Solidity, similar to Uniswap V2. It uses the AMM (Automated Market Maker) model with the formula `x * y = k`.
 
-## 🚀 Características
+## 🚀 Features
 
-- **AMM (Automated Market Maker)**: Modelo de liquidez basado en la fórmula constante de producto
-- **Swaps**: Intercambio de tokens con 0.3% de fee
-- **Liquidez**: Añadir y remover liquidez de los pools
-- **Factory Pattern**: Creación dinámica de pares de tokens
-- **Router**: Sistema de enrutamiento para optimizar swaps
-- **LP Tokens**: Tokens de liquidez para representar la participación en los pools
+- **AMM (Automated Market Maker)**: Liquidity model based on the constant product formula
+- **Swaps**: Token exchange with a 0.3% fee
+- **Liquidity**: Add and remove liquidity from pools
+- **Factory Pattern**: Dynamic creation of token pairs
+- **Router**: Routing system to optimize swaps
+- **LP Tokens**: Liquidity tokens representing participation in the pools
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 DEX/
 ├── contracts/
-│   ├── DEXFactory.sol    # Crea y gestiona los pares
-│   ├── DEXPair.sol       # Contrato del pool de liquidez
-│   ├── DEXRouter.sol     # Router para swaps y liquidez
-│   └── MockERC20.sol     # Token de prueba
+│   ├── DEXFactory.sol    # Creates and manages pairs
+│   ├── DEXPair.sol       # Liquidity pool contract
+│   ├── DEXRouter.sol     # Router for swaps and liquidity
+│   └── MockERC20.sol     # Test token
 ├── scripts/
-│   └── deploy.js         # Script de deployment
+│   └── deploy.js         # Deployment script
 ├── test/
-│   └── DEX.test.js       # Tests completos
-├── hardhat.config.js     # Configuración de Hardhat
+│   └── DEX.test.js       # Complete test suite
+├── hardhat.config.js     # Hardhat configuration
 └── package.json
 ```
 
-## 🛠️ Instalación
+## 🛠️ Installation
 
 ```bash
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Compilar contratos
+# Compile contracts
 npm run compile
 ```
 
 ## 🧪 Tests
 
 ```bash
-# Ejecutar tests
+# Run tests
 npm test
 
-# Ver coverage
+# View coverage
 npx hardhat coverage
 ```
 
 ## 🚢 Deployment
 
-### Red Local (Hardhat Network)
+### Local Network (Hardhat Network)
 
 ```bash
-# Terminal 1: Iniciar nodo local
+# Terminal 1: Start local node
 npm run node
 
-# Terminal 2: Desplegar contratos
+# Terminal 2: Deploy contracts
 npm run deploy
 ```
 
 ### Testnet (Sepolia)
 
-1. Configurar `.env`:
+1. Configure `.env`:
 ```bash
 cp .env.example .env
-# Editar .env con tu PRIVATE_KEY y RPC URLs
+# Edit .env with your PRIVATE_KEY and RPC URLs
 ```
 
-2. Desplegar:
+2. Deploy:
 ```bash
 npx hardhat run scripts/deploy.js --network sepolia
 ```
 
-## 📖 Uso
+## 📖 Usage
 
-### 1. Añadir Liquidez
+### 1. Add Liquidity
 
 ```javascript
-// Aprobar tokens
+// Approve tokens
 await tokenA.approve(routerAddress, amountA);
 await tokenB.approve(routerAddress, amountB);
 
-// Añadir liquidez
+// Add liquidity
 await router.addLiquidity(
   tokenAAddress,
   tokenBAddress,
@@ -95,13 +95,13 @@ await router.addLiquidity(
 );
 ```
 
-### 2. Swap de Tokens
+### 2. Token Swap
 
 ```javascript
-// Aprobar tokens
+// Approve tokens
 await tokenA.approve(routerAddress, amountIn);
 
-// Hacer swap
+// Swap
 const path = [tokenAAddress, tokenBAddress];
 await router.swapExactTokensForTokens(
   amountIn,
@@ -112,13 +112,13 @@ await router.swapExactTokensForTokens(
 );
 ```
 
-### 3. Remover Liquidez
+### 3. Remove Liquidity
 
 ```javascript
-// Aprobar LP tokens
+// Approve LP tokens
 await pairContract.approve(routerAddress, liquidity);
 
-// Remover liquidez
+// Remove liquidity
 await router.removeLiquidity(
   tokenAAddress,
   tokenBAddress,
@@ -130,67 +130,67 @@ await router.removeLiquidity(
 );
 ```
 
-## 🔧 Contratos Principales
+## 🔧 Core Contracts
 
 ### DEXFactory
-Crea y gestiona los pares de liquidez. Utiliza CREATE2 para direcciones determinísticas.
+Creates and manages liquidity pairs. Uses CREATE2 for deterministic addresses.
 
 ### DEXPair
-Pool de liquidez que implementa:
-- Fórmula AMM: `x * y = k`
-- Mint/Burn de LP tokens
-- Swap con 0.3% fee
-- Oracle de precios
+Liquidity pool implementing:
+- AMM Formula: `x * y = k`
+- LP tokens Mint/Burn
+- Swap with 0.3% fee
+- Price oracle
 
 ### DEXRouter
-Interfaz principal para usuarios:
-- Gestión de liquidez
-- Swaps simples y multi-hop
-- Cálculos de precios
-- Protección contra slippage
+Main user interface:
+- Liquidity management
+- Simple and multi-hop swaps
+- Price calculations
+- Slippage protection
 
-## 🔐 Seguridad
+## 🔐 Security
 
-- ✅ Protección contra reentrancy
-- ✅ Validaciones de deadline
+- ✅ Reentrancy protection
+- ✅ Deadline validations
 - ✅ Slippage protection
-- ✅ Checks de liquidez mínima
-- ✅ Ordenamiento de tokens consistente
+- ✅ Minimum liquidity checks
+- ✅ Consistent token ordering
 
 ## 📊 Fee Structure
 
-- **Swap Fee**: 0.3% por transacción
-- **Distribución**: 100% a los proveedores de liquidez
+- **Swap Fee**: 0.3% per transaction
+- **Distribution**: 100% to liquidity providers
 
-## 🧮 Fórmula AMM
+## 🧮 AMM Formula
 
-El DEX utiliza la fórmula de producto constante:
+The DEX uses the constant product formula:
 
 ```
 x * y = k
 ```
 
-Donde:
-- `x` = reserva del token A
-- `y` = reserva del token B
-- `k` = constante (se mantiene después de cada swap)
+Where:
+- `x` = Token A reserve
+- `y` = Token B reserve
+- `k` = constant (maintained after each swap)
 
-## 🌐 Próximos Pasos
+## 🌐 Next Steps
 
-1. **Frontend**: Crear interfaz React para interactuar con el DEX
-2. **Subgraph**: Indexar eventos para analytics
-3. **Governance**: Añadir token de gobernanza
-4. **Farms**: Implementar liquidity mining
-5. **Multihop**: Optimizar rutas para swaps complejos
+1. **Frontend**: Create React interface to interact with the DEX
+2. **Subgraph**: Index events for analytics
+3. **Governance**: Add governance token
+4. **Farms**: Implement liquidity mining
+5. **Multihop**: Optimize routes for complex swaps
 
-## 📝 Licencia
+## 📝 License
 
 MIT
 
-## 🤝 Contribuir
+## 🤝 Contributing
 
-¡Las contribuciones son bienvenidas! Por favor abre un issue o pull request.
+Contributions are welcome! Please open an issue or pull request.
 
 ---
 
-**⚠️ Disclaimer**: Este código es para fines educativos. Realizar auditoría de seguridad antes de usar en producción.
+**⚠️ Disclaimer**: This code is for educational purposes. Perform a security audit before using in production.

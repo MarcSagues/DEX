@@ -1,27 +1,27 @@
-# 🚀 DEX - Estado del Sistema
+# 🚀 DEX - System Status
 
-## ✅ Servicios Activos
+## ✅ Active Services
 
-### 🔗 Blockchain Local
-- **Nodo Hardhat:** `http://localhost:8545`
-- **Estado:** ✅ Corriendo
+### 🔗 Local Blockchain
+- **Hardhat Node:** `http://localhost:8545`
+- **Status:** ✅ Running
 - **Chain ID:** 1337
-- **Cuentas:** 20 cuentas con 10,000 ETH cada una
+- **Accounts:** 20 accounts with 10,000 ETH each
 
-### 🌐 Frontend Web
+### 🌐 Web Frontend
 - **URL:** `http://localhost:3000`
-- **Estado:** ✅ Corriendo
-- **Características:**
-  - Conectar MetaMask o usar cuenta local
-  - Swap de tokens
-  - Añadir/Remover liquidez
-  - Ver estadísticas del pool en tiempo real
+- **Status:** ✅ Running
+- **Features:**
+  - Connect MetaMask or use local account
+  - Token swap
+  - Add/Remove liquidity
+  - View real-time pool statistics
 
 ---
 
-## 📝 Contratos Desplegados
+## 📝 Deployed Contracts
 
-| Contrato | Dirección |
+| Contract | Address |
 |----------|-----------|
 | **DEXFactory** | `0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf` |
 | **DEXRouter** | `0x0E801D84Fa97b50751Dbf25036d067dCf18858bF` |
@@ -30,63 +30,63 @@
 
 ---
 
-## 🎮 Cómo Usar
+## 🎮 How to Use
 
-### Opción 1: Con MetaMask 🦊
+### Option 1: With MetaMask 🦊
 
-1. **Conectar MetaMask:**
-   - Abre `http://localhost:3000`
-   - Haz clic en "🦊 Conectar MetaMask"
-   - Acepta añadir la red Hardhat Local
-   - Autoriza la conexión
+1. **Connect MetaMask:**
+   - Open `http://localhost:3000`
+   - Click on "🦊 Connect MetaMask"
+   - Accept to add the Hardhat Local network
+   - Authorize the connection
 
-2. **Importar Cuenta (si es necesario):**
-   - Clave privada cuenta #0:
+2. **Import Account (if needed):**
+   - Private key for account #0:
      ```
      0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
      ```
 
-3. **Obtener Tokens:**
+3. **Get Tokens:**
    ```bash
    npm run mint -- --network localhost
    ```
 
-4. **Añadir tokens a MetaMask:**
+4. **Add tokens to MetaMask:**
    - Token A: `0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf`
    - Token B: `0x9d4454B023096f34B160D6B654540c56A1F81688`
 
-5. **¡Listo para usar el DEX!**
+5. **Ready to use the DEX!**
 
-### Opción 2: Sin MetaMask (Cuenta Local)
+### Option 2: Without MetaMask (Local Account)
 
-Si no tienes MetaMask instalado, la aplicación se conectará automáticamente usando la primera cuenta del nodo Hardhat.
+If you don't have MetaMask installed, the application will automatically connect using the first account from the Hardhat node.
 
 ---
 
-## 🛠️ Comandos Útiles
+## 🛠️ Useful Commands
 
 ```bash
-# Ver balances y estado
+# View balances and status
 npm run interact -- --network localhost
 
-# Mintear más tokens
+# Mint more tokens
 npm run mint -- --network localhost
 
-# Ejecutar tests
+# Run tests
 npm test
 
-# Compilar contratos
+# Compile contracts
 npm run compile
 
-# Ver consola de Hardhat
+# View Hardhat console
 npx hardhat console --network localhost
 ```
 
 ---
 
-## 📊 Pool de Liquidez Actual
+## 📊 Current Liquidity Pool
 
-Ejecuta para ver el estado actual:
+Run to see the current status:
 ```bash
 npm run interact -- --network localhost
 ```
@@ -95,99 +95,99 @@ npm run interact -- --network localhost
 
 ## 🔧 Troubleshooting
 
-### Frontend no carga
+### Frontend not loading
 ```bash
-# Reiniciar servidor
+# Restart server
 cd frontend
 node server.js
 ```
 
-### Nodo no responde
+### Node not responding
 ```bash
-# Reiniciar nodo Hardhat
-# Ctrl+C para detener
+# Restart Hardhat node
+# Ctrl+C to stop
 npm run node
 ```
 
-### Resetear todo
+### Reset everything
 ```bash
-# 1. Detener todos los procesos (Ctrl+C)
-# 2. Reiniciar nodo
+# 1. Stop all processes (Ctrl+C)
+# 2. Restart node
 npm run node
 
-# 3. (En otra terminal) Redesplegar
+# 3. (In another terminal) Redeploy
 npm run deploy -- --network localhost
 
-# 4. (En otra terminal) Iniciar frontend
+# 4. (In another terminal) Start frontend
 npm run frontend
 ```
 
 ---
 
-## 📖 Documentación
+## 📖 Documentation
 
-- **README.md** - Documentación completa del proyecto
-- **QUICK_START.md** - Guía rápida de inicio
-- **METAMASK_GUIDE.md** - Configuración detallada de MetaMask
-
----
-
-## 🎯 Funcionalidades Disponibles
-
-### ✅ Swap de Tokens
-- Intercambio instantáneo entre Token A y Token B
-- Fee del 0.3% por transacción
-- Cálculo automático de precio
-
-### ✅ Gestión de Liquidez
-- Añadir liquidez (recibe LP tokens)
-- Remover liquidez (quema LP tokens)
-- Ver participación en el pool
-
-### ✅ Información en Tiempo Real
-- Reservas del pool
-- Precio actual
-- Balance de LP tokens
-- Balance de ETH
+- **README.md** - Complete project documentation
+- **QUICK_START.md** - Quick start guide
+- **METAMASK_GUIDE.md** - Detailed MetaMask configuration
 
 ---
 
-## 🔐 Cuentas de Hardhat
+## 🎯 Available Features
 
-### Cuenta #0 (Principal)
+### ✅ Token Swap
+- Instant exchange between Token A and Token B
+- 0.3% fee per transaction
+- Automatic price calculation
+
+### ✅ Liquidity Management
+- Add liquidity (receive LP tokens)
+- Remove liquidity (burn LP tokens)
+- View pool participation
+
+### ✅ Real-time Information
+- Pool reserves
+- Current price
+- LP tokens balance
+- ETH balance
+
+---
+
+## 🔐 Hardhat Accounts
+
+### Account #0 (Primary)
 ```
-Dirección: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-Clave Privada: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 Balance: ~10,000 ETH
 ```
 
-### Cuenta #1
+### Account #1
 ```
-Dirección: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
-Clave Privada: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+Address: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+Private Key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
 Balance: 10,000 ETH
 ```
 
-⚠️ **SOLO para desarrollo local**
+⚠️ **ONLY for local development**
 
 ---
 
-## 📱 Acceso Rápido
+## 📱 Quick Access
 
 - 🌐 **Frontend:** [http://localhost:3000](http://localhost:3000)
 - 🔗 **Blockchain:** http://localhost:8545
-- 📝 **Contratos:** Ver `deployment-addresses.json`
+- 📝 **Contracts:** See `deployment-addresses.json`
 
 ---
 
-## ✨ Próximos Pasos
+## ✨ Next Steps
 
-1. ✅ Conectar wallet
-2. ✅ Obtener tokens de prueba
-3. ✅ Añadir liquidez inicial
-4. ✅ Hacer tu primer swap
-5. 🚀 Explorar y experimentar
+1. ✅ Connect wallet
+2. ✅ Get test tokens
+3. ✅ Add initial liquidity
+4. ✅ Make your first swap
+5. 🚀 Explore and experiment
 
 ---
 
-**¡Todo está listo para usar! 🎉**
+**Everything is ready to use! 🎉**

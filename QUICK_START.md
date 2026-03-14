@@ -1,159 +1,159 @@
-# 🚀 Guía Rápida - DEX
+# 🚀 Quick Start - DEX
 
-## ⚡ Inicio Rápido
+## ⚡ Quick Setup
 
-### 1️⃣ Instalación
+### 1️⃣ Installation
 ```bash
 npm install
 ```
 
-### 2️⃣ Compilar Contratos
+### 2️⃣ Compile Contracts
 ```bash
 npm run compile
 ```
 
-### 3️⃣ Ejecutar Tests
+### 3️⃣ Run Tests
 ```bash
 npm test
 ```
 
-## 🎯 Comandos Principales
+## 🎯 Main Commands
 
-### Desarrollo Local
+### Local Development
 
 ```bash
-# Terminal 1: Iniciar red local
+# Terminal 1: Start local network
 npm run node
 
-# Terminal 2: Desplegar contratos
+# Terminal 2: Deploy contracts
 npm run deploy
 
-# Terminal 3: Interactuar con el DEX
+# Terminal 3: Interact with the DEX
 npm run interact
 ```
 
 ### Testnet
 
 ```bash
-# 1. Configurar .env
+# 1. Configure .env
 cp .env.example .env
-# Editar .env con tu PRIVATE_KEY
+# Edit .env with your PRIVATE_KEY
 
-# 2. Desplegar en Sepolia
+# 2. Deploy to Sepolia
 npx hardhat run scripts/deploy.js --network sepolia
 
-# 3. Interactuar
+# 3. Interact
 npx hardhat run scripts/interact.js --network sepolia
 ```
 
-## 📚 Arquitectura del DEX
+## 📚 DEX Architecture
 
 ```
 ┌─────────────────┐
-│   DEXFactory    │  ← Crea pares de tokens
+│   DEXFactory    │  ← Creates token pairs
 └────────┬────────┘
-         │ crea
+         │ creates
          ▼
     ┌─────────┐
-    │ DEXPair │  ← Pool de liquidez (AMM)
+    │ DEXPair │  ← Liquidity Pool (AMM)
     └─────────┘
          ▲
-         │ usa
+          │ uses
 ┌────────┴────────┐
-│   DEXRouter     │  ← Interfaz principal
+│   DEXRouter     │  ← Main interface
 └─────────────────┘
 ```
 
-## 🔑 Funciones Principales
+## 🔑 Key Functions
 
-### 1. Añadir Liquidez
+### 1. Add Liquidity
 ```javascript
 router.addLiquidity(
-  tokenA,           // Dirección del token A
-  tokenB,           // Dirección del token B
-  amountA,          // Cantidad deseada de A
-  amountB,          // Cantidad deseada de B
-  amountAMin,       // Mínimo aceptable de A
-  amountBMin,       // Mínimo aceptable de B
-  to,               // Destinatario de LP tokens
-  deadline          // Timestamp límite
+  tokenA,           // Token A address
+  tokenB,           // Token B address
+  amountA,          // Desired amount of A
+  amountB,          // Desired amount of B
+  amountAMin,       // Minimum acceptable amount of A
+  amountBMin,       // Minimum acceptable amount of B
+  to,               // Recipient of LP tokens
+  deadline          // Timestamp limit
 )
 ```
 
-### 2. Swap de Tokens
+### 2. Token Swap
 ```javascript
 router.swapExactTokensForTokens(
-  amountIn,         // Cantidad a intercambiar
-  amountOutMin,     // Mínimo aceptable a recibir
-  [tokenA, tokenB], // Path de tokens
-  to,               // Destinatario
-  deadline          // Timestamp límite
+  amountIn,         // Amount to exchange
+  amountOutMin,     // Minimum acceptable amount to receive
+  [tokenA, tokenB], // Token path
+  to,               // Recipient
+  deadline          // Timestamp limit
 )
 ```
 
-### 3. Remover Liquidez
+### 3. Remove Liquidity
 ```javascript
 router.removeLiquidity(
   tokenA,           // Token A
   tokenB,           // Token B
-  liquidity,        // LP tokens a quemar
-  amountAMin,       // Mínimo de A a recibir
-  amountBMin,       // Mínimo de B a recibir
-  to,               // Destinatario
-  deadline          // Timestamp límite
+  liquidity,        // LP tokens to burn
+  amountAMin,       // Minimum A to receive
+  amountBMin,       // Minimum B to receive
+  to,               // Recipient
+  deadline          // Timestamp limit
 )
 ```
 
-## 📊 Fórmulas Importantes
+## 📊 Important Formulas
 
-### Precio de Swap
+### Swap Price
 ```
 amountOut = (amountIn × 997 × reserveOut) / (reserveIn × 1000 + amountIn × 997)
 ```
-*Nota: 997/1000 = 0.3% de fee*
+*Note: 997/1000 = 0.3% fee*
 
-### Liquidez
+### Liquidity
 ```
-k = reserveA × reserveB  (debe mantenerse constante)
+k = reserveA × reserveB  (must remain constant)
 ```
 
 ## 💡 Tips
 
-1. **Deadline**: Siempre incluye un deadline razonable (ej: 20 minutos)
-2. **Slippage**: Ajusta `amountMin` para protegerte contra slippage
-3. **Aprobar**: No olvides aprobar tokens antes de cada operación
-4. **Gas**: Considera el costo de gas en tus operaciones
+1. **Deadline**: Always include a reasonable deadline (e.g., 20 minutes)
+2. **Slippage**: Adjust `amountMin` to protect against slippage
+3. **Approve**: Don't forget to approve tokens before each operation
+4. **Gas**: Consider the gas cost in your operations
 
 ## 🛠️ Troubleshooting
 
 ### Error: INSUFFICIENT_LIQUIDITY
-- Asegúrate de que el pool tenga suficiente liquidez
-- Verifica que estás usando los tokens correctos
+- Ensure the pool has enough liquidity
+- Verify that you are using the correct tokens
 
 ### Error: EXPIRED
-- El deadline ha pasado, usa un timestamp más largo
+- The deadline has passed, use a longer timestamp
 
 ### Error: INSUFFICIENT_OUTPUT_AMOUNT
-- El slippage es muy alto
-- Reduce `amountOutMin` o espera mejores condiciones
+- Slippage is too high
+- Reduce `amountOutMin` or wait for better conditions
 
 ### Error: PAIR_DOES_NOT_EXIST
-- El par de tokens no existe
-- Crea el par primero con `addLiquidity`
+- The token pair does not exist
+- Create the pair first with `addLiquidity`
 
-## 🔗 Recursos
+## 🔗 Resources
 
 - [Hardhat Docs](https://hardhat.org/)
 - [OpenZeppelin](https://docs.openzeppelin.com/)
 - [Uniswap V2 Whitepaper](https://uniswap.org/whitepaper.pdf)
 - [Ethers.js Docs](https://docs.ethers.org/)
 
-## 📞 Soporte
+## 📞 Support
 
-Si encuentras problemas:
-1. Revisa los tests: `npm test`
-2. Verifica los logs en la consola
-3. Usa Hardhat console para debugging: `npx hardhat console`
+If you encounter issues:
+1. Check the tests: `npm test`
+2. Verify console logs
+3. Use Hardhat console for debugging: `npx hardhat console`
 
 ---
 

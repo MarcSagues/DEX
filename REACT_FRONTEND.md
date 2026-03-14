@@ -1,166 +1,166 @@
-# 🚀 Frontend React - DEX
+# 🚀 React Frontend - DEX
 
-## ✅ Frontend React Creado
+## ✅ React Frontend Created
 
-Tu DEX ahora tiene una interfaz moderna en **React** con componentes modulares y reutilizables.
+Your DEX now has a modern **React** interface with modular and reusable components.
 
 ---
 
-## 📁 Estructura del Proyecto React
+## 📁 React Project Structure
 
 ```
 frontend-react/
 ├── public/
-│   └── index.html          # HTML base
+│   └── index.html          # Base HTML
 ├── src/
-│   ├── components/         # Componentes React
-│   │   ├── Header.js       # Cabecera del DEX
-│   │   ├── StatusBar.js    # Barra de estado (wallet, red, balance)
-│   │   ├── SwapCard.js     # Tarjeta de swap
-│   │   ├── LiquidityCard.js # Tarjeta añadir liquidez
-│   │   ├── RemoveLiquidityCard.js # Tarjeta remover liquidez
-│   │   ├── PoolInfoCard.js # Info del pool
-│   │   ├── AddressesCard.js # Direcciones de contratos
-│   │   └── *.css          # Estilos de componentes
-│   ├── App.js             # Componente principal
-│   ├── App.css            # Estilos globales
-│   ├── index.js           # Punto de entrada
-│   └── index.css          # Estilos base
-└── package.json           # Dependencias
+│   ├── components/         # React Components
+│   │   ├── Header.js       # DEX Header
+│   │   ├── StatusBar.js    # Status Bar (wallet, network, balance)
+│   │   ├── SwapCard.js     # Swap Card
+│   │   ├── LiquidityCard.js # Add Liquidity Card
+│   │   ├── RemoveLiquidityCard.js # Remove Liquidity Card
+│   │   ├── PoolInfoCard.js # Pool Information
+│   │   ├── AddressesCard.js # Contract Addresses
+│   │   └── *.css          # Component Styles
+│   ├── App.js             # Main Component
+│   ├── App.css            # Global Styles
+│   ├── index.js           # Entry Point
+│   └── index.css          # Base Styles
+└── package.json           # Dependencies
 ```
 
 ---
 
-## 🎯 Características del Frontend React
+## 🎯 React Frontend Features
 
-### ✅ Componentes Modulares
-- **Header**: Título y descripción
-- **StatusBar**: Estado de conexión, cuenta y balance
-- **SwapCard**: Intercambio de tokens
-- **LiquidityCard**: Añadir liquidez al pool
-- **RemoveLiquidityCard**: Remover liquidez
-- **PoolInfoCard**: Información en tiempo real del pool
-- **AddressesCard**: Direcciones de los contratos
+### ✅ Modular Components
+- **Header**: Title and description
+- **StatusBar**: Connection status, account, and balance
+- **SwapCard**: Token exchange
+- **LiquidityCard**: Add liquidity to the pool
+- **RemoveLiquidityCard**: Remove liquidity
+- **PoolInfoCard**: Real-time pool information
+- **AddressesCard**: Contract addresses
 
-### ✅ Funcionalidades
-- ✅ Conexión con MetaMask
-- ✅ Detección automática de red
-- ✅ Cambio automático a Hardhat Local
-- ✅ Validación de balances
-- ✅ Actualización automática del pool cada 10 segundos
-- ✅ Manejo de errores mejorado
-- ✅ Estados de carga (loading)
+### ✅ Functionalities
+- ✅ MetaMask connection
+- ✅ Automatic network detection
+- ✅ Automatic switch to Hardhat Local
+- ✅ Balance validation
+- ✅ Automatic pool update every 10 seconds
+- ✅ Improved error handling
+- ✅ Loading states
 - ✅ Responsive design
 
-### ✅ Integración con Ethers.js
-- ✅ Librería Ethers.js integrada
-- ✅ Gestión de estado con React Hooks
-- ✅ Interacción con contratos inteligentes
-- ✅ Eventos de MetaMask (cambio de cuenta/red)
+### ✅ Ethers.js Integration
+- ✅ Integrated Ethers.js library
+- ✅ State management with React Hooks
+- ✅ Interaction with smart contracts
+- ✅ MetaMask events (account/network change)
 
 ---
 
-## 🚀 Cómo Ejecutar
+## 🚀 How to Run
 
-### 1️⃣ Asegúrate de que el nodo esté corriendo
+### 1️⃣ Ensure the node is running
 ```bash
 npm run node
 ```
 
-### 2️⃣ Inicia el frontend React
+### 2️⃣ Start the React frontend
 ```bash
 npm run react
 ```
 
-Se abrirá automáticamente en: **http://localhost:3000**
+It will automatically open at: **http://localhost:3000**
 
 ---
 
-## 🔄 Comparación: HTML vs React
+## 🔄 Comparison: HTML vs React
 
-| Característica | Frontend HTML | Frontend React |
+| Feature | HTML Frontend | React Frontend |
 |---------------|---------------|----------------|
-| **Tecnología** | HTML + Vanilla JS | React + Hooks |
-| **Modularidad** | Archivo único | Componentes separados |
-| **Mantenibilidad** | Difícil | Fácil |
-| **Reutilización** | Limitada | Alta |
-| **Estado** | Manual | React State |
-| **Render** | DOM directo | Virtual DOM |
-| **Organización** | Un archivo grande | Múltiples archivos pequeños |
+| **Technology** | HTML + Vanilla JS | React + Hooks |
+| **Modularity** | Single file | Separate components |
+| **Maintainability** | Hard | Easy |
+| **Reusability** | Limited | High |
+| **State** | Manual | React State |
+| **Render** | Direct DOM | Virtual DOM |
+| **Organization** | One large file | Multiple small files |
 
 ---
 
-## 📝 Uso del Frontend React
+## 📝 Using the React Frontend
 
-### Conectar Wallet
-1. Haz clic en **"🦊 Conectar Wallet"**
-2. Acepta en MetaMask
-3. Si te pide, acepta añadir la red Hardhat Local
+### Connect Wallet
+1. Click on **"🦊 Connect Wallet"**
+2. Accept in MetaMask
+3. If asked, accept adding the Hardhat Local network
 
-### Hacer Swap
-1. Selecciona token de entrada
-2. Ingresa cantidad
-3. Selecciona token de salida  
-4. Haz clic en **"Swap"**
-5. Confirma en MetaMask (2 transacciones)
+### Make a Swap
+1. Select the input token
+2. Enter the amount
+3. Select the output token  
+4. Click **"Swap"**
+5. Confirm in MetaMask (2 transactions)
 
-### Añadir Liquidez
-1. Ingresa cantidad de Token A
-2. Ingresa cantidad de Token B
-3. Haz clic en **"Añadir Liquidez"**
-4. Confirma en MetaMask (3 transacciones)
+### Add Liquidity
+1. Enter the amount for Token A
+2. Enter the amount for Token B
+3. Click **"Add Liquidity"**
+4. Confirm in MetaMask (3 transactions)
 
-### Remover Liquidez
-1. Ingresa cantidad de LP tokens
-2. Haz clic en **"Remover Liquidez"**
-3. Confirma en MetaMask (2 transacciones)
+### Remove Liquidity
+1. Enter the amount of LP tokens
+2. Click **"Remove Liquidity"**
+3. Confirm in MetaMask (2 transactions)
 
 ---
 
-## 🎨 Personalización
+## 🎨 Customization
 
-### Cambiar Colores
-Edita `src/index.css` y `src/App.css`:
+### Change Colors
+Edit `src/index.css` and `src/App.css`:
 ```css
 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 ```
 
-### Añadir Componentes
-Crea un nuevo archivo en `src/components/`:
+### Add Components
+Create a new file in `src/components/`:
 ```javascript
 import React from 'react';
 
-function MiComponente() {
-  return <div>Mi Componente</div>;
+function MyComponent() {
+  return <div>My Component</div>;
 }
 
-export default MiComponente;
+export default MyComponent;
 ```
 
-Luego impórtalo en `App.js`:
+Then import it in `App.js`:
 ```javascript
-import MiComponente from './components/MiComponente';
+import MyComponent from './components/MyComponent';
 ```
 
 ---
 
-## 🔧 Comandos Disponibles
+## 🔧 Available Commands
 
 ```bash
-# Desarrollo
-npm run react              # Inicia servidor de desarrollo
+# Development
+npm run react              # Starts development server
 
 # Build
 cd frontend-react
-npm run build              # Crea versión de producción
+npm run build              # Creates production build
 
 # Test
 cd frontend-react
-npm test                   # Ejecuta tests
+npm test                   # Runs tests
 
 # Linting
 cd frontend-react
-npm run eject              # Expone configuración (irreversible)
+npm run eject              # Exposes configuration (irreversible)
 ```
 
 ---
@@ -174,17 +174,17 @@ npm install
 ```
 
 ### "Port 3000 is already in use"
-Detén el servidor HTML anterior o cambia el puerto en `package.json`:
+Stop the previous HTML server or change the port in `package.json`:
 ```json
 "start": "PORT=3001 react-scripts start"
 ```
 
 ### "Failed to compile"
-Verifica que todos los componentes estén importados correctamente y que no haya errores de sintaxis.
+Verify that all components are imported correctly and that there are no syntax errors.
 
 ---
 
-## 📦 Dependencias Instaladas
+## 📦 Installed Dependencies
 
 - **react**: ^18.2.0
 - **react-dom**: ^18.2.0
@@ -193,27 +193,27 @@ Verifica que todos los componentes estén importados correctamente y que no haya
 
 ---
 
-## 🎯 Ventajas de React
+## 🎯 Advantages of React
 
-1. **Componentes Reutilizables**: Cada parte es independiente
-2. **Estado Reactivo**: Actualización automática de la UI
-3. **Virtual DOM**: Mejor rendimiento
-4. **Ecosistema**: Miles de librerías disponibles
+1. **Reusable Components**: Each part is independent
+2. **Reactive State**: Automatic UI update
+3. **Virtual DOM**: Better performance
+4. **Ecosystem**: Thousands of libraries available
 5. **Debugging**: React DevTools
-6. **Mantenibilidad**: Código más organizado
-7. **Testing**: Fácil de testear
+6. **Maintainability**: More organized code
+7. **Testing**: Easy to test
 
 ---
 
-## 🚀 Próximos Pasos
+## 🚀 Next Steps
 
-1. ✅ Añadir gráficos de precio (Chart.js)
-2. ✅ Historial de transacciones
-3. ✅ Múltiples pares de tokens
+1. ✅ Add price charts (Chart.js)
+2. ✅ Transaction history
+3. ✅ Multiple token pairs
 4. ✅ Dark mode
-5. ✅ Notificaciones toast
-6. ✅ Internacionalización (i18n)
+5. ✅ Toast notifications
+6. ✅ Internationalization (i18n)
 
 ---
 
-**¡Tu DEX en React está listo! 🎊**
+**Your React DEX is ready! 🎊**
