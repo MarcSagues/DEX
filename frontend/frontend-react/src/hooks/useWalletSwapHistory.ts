@@ -60,7 +60,7 @@ export function useWalletSwapHistory(wallet: string | null, provider: any, chain
     };
 
     fetchSwaps();
-  }, [wallet, provider]);
+  }, [wallet, provider, chainId]);
 
   return { swaps, loading };
 }

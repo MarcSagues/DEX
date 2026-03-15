@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
 import { ethers } from 'ethers';
-import { getAddresses } from './hooks/useContracts';
 import Sidebar from './components/Layout/Sidebar';
 import MainLayout from './components/Layout/MainLayout';
 import Dashboard from './components/Dashboard/Dashboard';
