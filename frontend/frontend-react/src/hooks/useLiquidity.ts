@@ -60,10 +60,7 @@ export function useLiquidity() {
         try {
             const tokenAAddress = params.contracts.tokens[params.tokenA].target;
             const tokenBAddress = params.contracts.tokens[params.tokenB].target;
-
-            // 1. Get the Pair address
-            const pairAddress = await params.contracts.factory.getPair(tokenAAddress, tokenBAddress);
-
+            
             // 2. Approve tokens to Router
             await approveTokens(params.contracts, params.tokenA, params.tokenB, params.amountA, params.amountB);
 

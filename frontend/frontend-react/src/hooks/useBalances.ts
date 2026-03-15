@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Contract, formatUnits } from 'ethers';
 
 interface Contracts {
@@ -30,7 +30,7 @@ export function useBalances(
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const loadBalances = async () => {
+    const loadBalances = useCallback(async () => {
         // Validaciones
         if (!contracts || !wallet) {
             console.log('⚠️ No hay wallet o contracts disponibles para leer balances');
@@ -70,12 +70,12 @@ export function useBalances(
         } finally {
             setLoading(false);
         }
-    };
+    }, [contracts, wallet, fromToken, toToken]);
 
     // Auto-cargar balances cuando cambien las dependencias
     useEffect(() => {
         loadBalances();
-    }, [contracts, wallet, fromToken, toToken]);
+    }, [loadBalances]);
 
     return {
         fromBalance,

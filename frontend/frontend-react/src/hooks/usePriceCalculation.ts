@@ -35,7 +35,6 @@ export function usePriceCalculation(
     // Guardar último valor válido
     const lastValid = React.useRef({ swapRate: '1', priceImpact: '0' });
     useEffect(() => {
-        let cancelled = false;
         async function calculateImpact() {
             setLoading(true);
             setError(null);
@@ -131,9 +130,9 @@ export function usePriceCalculation(
             }
             setLoading(false);
         }
+
         calculateImpact();
-        return () => { cancelled = true; };
-    }, [contracts, fromToken, toToken, typeof window !== 'undefined' ? (document.querySelector('input[name="fromAmount"]') as HTMLInputElement)?.value : undefined, typeof window !== 'undefined' ? (document.querySelector('input[name="toAmount"]') as HTMLInputElement)?.value : undefined]);
+    }, [contracts, fromToken, toToken, chainId]);
 
     // Calcula el output dado un input
     const getOutputAmount = async (inputAmount: string): Promise<string> => {

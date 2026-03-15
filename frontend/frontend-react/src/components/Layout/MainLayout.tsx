@@ -10,6 +10,8 @@ interface MainLayoutProps {
     chainId: number | null;
     networkName: string;
     sidebarCollapsed: boolean;
+    onToggleSidebar: () => void;
+    isMobileMenuOpen: boolean;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({
@@ -21,7 +23,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     currentPage,
     chainId,
     networkName,
-    sidebarCollapsed
+    sidebarCollapsed,
+    onToggleSidebar,
+    isMobileMenuOpen
 }) => {
     const pageNames = {
         dashboard: '📊 Dashboard',
@@ -33,15 +37,26 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         <div 
             className={`
                 flex-1 flex flex-col bg-[#0f111a] text-slate-100
-                transition-all duration-300
-                ${sidebarCollapsed ? 'ml-20' : 'ml-64'}
+                transition-all duration-300 min-h-screen
+                ${sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'}
+                overflow-x-hidden
             `}
         >
             {/* Header */}
             <header className="bg-[#0a0c1a]/80 backdrop-blur-xl border-b border-white/5 px-8 py-5 shadow-2xl sticky top-0 z-40">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center max-w-[1600px] mx-auto w-full">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-2xl font-black text-white tracking-tight">
+                        {/* Mobile Toggle Button */}
+                        <button 
+                            onClick={onToggleSidebar}
+                            className="md:hidden p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white border border-white/5"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        
+                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
                             {pageNames[currentPage]}
                         </h2>
                         <span className="text-slate-500 font-bold uppercase tracking-widest text-[10px] hidden md:block">

@@ -21,7 +21,15 @@ const App: React.FC = () => {
     const [showWalletSelector, setShowWalletSelector] = useState(false);
     const [availableWallets, setAvailableWallets] = useState<any[]>([]);
     const [networkName, setNetworkName] = useState<string>('Unknown');
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(window.innerWidth < 768);
+
+    // Close sidebar on navigation (mobile)
+    const handleNavigate = (page: Page) => {
+        setCurrentPage(page);
+        if (window.innerWidth < 768) {
+            setSidebarCollapsed(true);
+        }
+    };
 
     // Listen for network or account changes
     React.useEffect(() => {
@@ -150,7 +158,7 @@ const App: React.FC = () => {
             {/* Sidebar */}
             <Sidebar 
                 currentPage={currentPage} 
-                onNavigate={setCurrentPage} 
+                onNavigate={handleNavigate} 
                 isCollapsed={sidebarCollapsed}
                 onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
             />
@@ -165,6 +173,8 @@ const App: React.FC = () => {
                 chainId={chainId}
                 networkName={networkName}
                 sidebarCollapsed={sidebarCollapsed}
+                onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+                isMobileMenuOpen={!sidebarCollapsed}
             >
                 {renderPage()}
             </MainLayout>

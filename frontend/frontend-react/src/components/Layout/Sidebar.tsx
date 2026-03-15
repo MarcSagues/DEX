@@ -42,13 +42,22 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, isCollapsed,
     ];
 
     return (
-        <aside
-            className={`
-                fixed top-0 left-0 h-screen bg-[#0a0c1a] border-r border-white/5
-                transition-all duration-300 shadow-2xl z-50 flex flex-col
-                ${isCollapsed ? 'w-20' : 'w-64'}
-            `}
-        >
+        <>
+            {/* Backdrop for mobile */}
+            {!isCollapsed && (
+                <div 
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+                    onClick={onToggle}
+                ></div>
+            )}
+            
+            <aside
+                className={`
+                    fixed top-0 left-0 h-full bg-[#0a0c1a] border-r border-white/5
+                    transition-all duration-300 shadow-2xl z-50 flex flex-col
+                    ${isCollapsed ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'}
+                `}
+            >
             {/* Header / Logo */}
             <div className={`p-6 mb-8 flex items-center ${isCollapsed ? 'justify-center flex-col gap-4' : 'justify-between'}`}>
                 <div className="flex items-center gap-3">
@@ -133,6 +142,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, isCollapsed,
                 </div>
             </div>
         </aside>
+    </>
     );
 };
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { usePools, PoolData } from '../../hooks/usePools';
 import { useLiquidity } from '../../hooks/useLiquidity';
 import { useContracts } from '../../hooks/useContracts';
-import { formatUnits } from 'ethers';
 
 interface RemoveLiquidityProps {
     connected: boolean;
