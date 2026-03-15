@@ -27,7 +27,6 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
     const { addLiquidity, approveTokens, loading, error } = useLiquidity();
     const { quoteAddLiquidity } = usePools();
 
-    // Lista de tokens disponibles basada en los integrados en el contrato
     const availableTokens = contracts?.tokens ? Object.keys(contracts.tokens) : ['USDC', 'DAI', 'USDT'];
 
     const handleApprove = async () => {
@@ -37,7 +36,7 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
 
         try {
             await approveTokens(contracts, tokenA, tokenB, amountA, amountB);
-            alert('Tokens approved!');
+            alert('Tokens approved successfully!');
         } catch (err: any) {
             console.error(err);
             alert('Approval failed: ' + err.message);
@@ -50,7 +49,6 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
         if (!amountA || !amountB) return alert('Enter amounts for both tokens');
 
         try {
-            // Apply 0.5% slippage tolerance
             const amountAMin = (parseFloat(amountA) * 0.995).toString();
             const amountBMin = (parseFloat(amountB) * 0.995).toString();
 
@@ -65,7 +63,6 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
                 amountBMin
             });
             alert('Liquidity added successfully!');
-            // clear inputs
             setAmountA('');
             setAmountB('');
         } catch (err: any) {
@@ -74,7 +71,7 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
         }
     };
 
-    // Calculate optimal token B
+    // ... (Keep existing useEffect logic for quotes)
     useEffect(() => {
         if (inputMode === 'A' && amountA && contracts) {
             quoteAddLiquidity(contracts, tokenA, tokenB, amountA).then(val => {
@@ -97,7 +94,6 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
                         setPoolShare('100');
                     }
                 } else {
-                    // Do not clear amountB here so users can type both amounts for initial liquidity
                     setEstimatedLP('0');
                     setPoolShare('100');
                 }
@@ -105,7 +101,6 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
         }
     }, [amountA, inputMode, tokenA, tokenB, contracts, quoteAddLiquidity]);
 
-    // Calculate optimal token A
     useEffect(() => {
         if (inputMode === 'B' && amountB && contracts) {
             quoteAddLiquidity(contracts, tokenB, tokenA, amountB).then(val => {
@@ -128,7 +123,6 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
                         setPoolShare('100');
                     }
                 } else {
-                    // Do not clear amountA here so users can type both amounts for initial liquidity
                     setEstimatedLP('0');
                     setPoolShare('100');
                 }
@@ -137,19 +131,26 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
     }, [amountB, inputMode, tokenA, tokenB, contracts, quoteAddLiquidity]);
 
     return (
-        <div className="space-y-6">
-            {loading && <div className="text-purple-400 font-bold mb-4">Processing transaction...</div>}
-            {error && <div className="text-red-500 font-bold mb-4">{error}</div>}
-            {!connected && (
-                <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-xl p-4 text-yellow-400">
-                    ⚠️ Connect your wallet to add liquidity
-                </div>
-            )}
+        <div className="max-w-xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Status Messages */}
+            <div className="min-h-[40px]">
+                {loading && (
+                    <div className="flex items-center justify-center gap-3 text-violet-400 font-bold bg-violet-500/10 py-3 rounded-2xl border border-violet-500/20 animate-pulse">
+                        <span className="animate-spin inline-block w-5 h-5 border-2 border-violet-400 border-t-transparent rounded-full"></span>
+                        Processing Transaction...
+                    </div>
+                )}
+                {error && (
+                    <div className="text-red-600 font-bold bg-red-50 py-3 px-6 rounded-2xl border border-red-100 flex items-center gap-2">
+                        <span>⚠️</span> {error}
+                    </div>
+                )}
+            </div>
 
-            {/* Token A Input */}
-            <div className="bg-gray-800/50 rounded-xl p-6">
-                <div className="flex justify-between items-center mb-3">
-                    <label className="text-gray-400 text-sm">Token A</label>
+            {/* Input Token A */}
+            <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl p-6 border border-white/5">
+                <div className="flex justify-between items-center mb-4 px-1">
+                    <label className="text-slate-500 text-xs font-black uppercase tracking-widest">Deposit Token A</label>
                     <div className="flex items-center gap-3">
                         <button 
                             onClick={() => {
@@ -157,23 +158,21 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
                                 const addr = (addresses.tokens as any)[tokenA];
                                 onAddToken?.(addr, tokenA);
                             }}
-                            className="text-xs text-purple-400 hover:text-purple-300 transition flex items-center gap-1"
+                            className="text-[10px] font-bold text-violet-400 hover:text-white transition flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg border border-white/10"
                         >
-                            🦊 Import {tokenA}
+                            <span className="text-base leading-none">🦊</span> Import
                         </button>
-                        <span className="text-gray-400 text-sm">Balance: {parseFloat(balanceA).toFixed(4)}</span>
+                        <span className="text-slate-500 text-xs font-bold">Balance: <span className="text-white font-black">{parseFloat(balanceA).toFixed(4)}</span></span>
                     </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-center">
                     <select
                         value={tokenA}
                         onChange={(e) => setTokenA(e.target.value)}
-                        className="bg-gray-700 text-white px-4 py-3 rounded-lg font-semibold"
+                        className="bg-slate-800 text-white px-4 py-3 rounded-xl font-black text-sm border border-white/5 focus:outline-none focus:ring-2 focus:ring-violet-500/20 shadow-xl"
                     >
                         {availableTokens.map((token) => (
-                            <option key={token} value={token}>
-                                {token}
-                            </option>
+                            <option key={token} value={token}>{token}</option>
                         ))}
                     </select>
                     <input
@@ -183,23 +182,25 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
                             setInputMode('A');
                             setAmountA(e.target.value);
                         }}
-                        placeholder="0.0"
-                        className="flex-1 bg-transparent text-white text-2xl font-bold outline-none"
+                        placeholder="0.00"
+                        className="flex-1 bg-transparent text-white text-3xl font-black outline-none placeholder:text-slate-700"
                     />
                 </div>
             </div>
 
-            {/* Plus Icon */}
-            <div className="flex justify-center">
-                <div className="bg-purple-600/20 p-3 rounded-full">
-                    <span className="text-2xl">➕</span>
+            {/* Separator / Plus */}
+            <div className="flex justify-center -my-6 relative z-10">
+                <div className="bg-[#0a0c1a] rounded-2xl p-3 shadow-lg border border-white/5">
+                    <div className="bg-violet-600 w-8 h-8 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+                        +
+                    </div>
                 </div>
             </div>
 
-            {/* Token B Input */}
-            <div className="bg-gray-800/50 rounded-xl p-6">
-                <div className="flex justify-between items-center mb-3">
-                    <label className="text-gray-400 text-sm">Token B</label>
+            {/* Input Token B */}
+            <div className="bg-slate-900/40 backdrop-blur-md rounded-3xl p-6 border border-white/5">
+                <div className="flex justify-between items-center mb-4 px-1">
+                    <label className="text-slate-500 text-xs font-black uppercase tracking-widest">Deposit Token B</label>
                     <div className="flex items-center gap-3">
                         <button 
                             onClick={() => {
@@ -207,23 +208,21 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
                                 const addr = (addresses.tokens as any)[tokenB];
                                 onAddToken?.(addr, tokenB);
                             }}
-                            className="text-xs text-purple-400 hover:text-purple-300 transition flex items-center gap-1"
+                            className="text-[10px] font-bold text-violet-400 hover:text-white transition flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg border border-white/10"
                         >
-                            🦊 Import {tokenB}
+                            <span className="text-base leading-none">🦊</span> Import
                         </button>
-                        <span className="text-gray-400 text-sm">Balance: {parseFloat(balanceB).toFixed(4)}</span>
+                        <span className="text-slate-500 text-xs font-bold">Balance: <span className="text-white font-black">{parseFloat(balanceB).toFixed(4)}</span></span>
                     </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-center">
                     <select
                         value={tokenB}
                         onChange={(e) => setTokenB(e.target.value)}
-                        className="bg-gray-700 text-white px-4 py-3 rounded-lg font-semibold"
+                        className="bg-slate-800 text-white px-4 py-3 rounded-xl font-black text-sm border border-white/5 focus:outline-none focus:ring-2 focus:ring-violet-500/20 shadow-xl"
                     >
                         {availableTokens.map((token) => (
-                            <option key={token} value={token}>
-                                {token}
-                            </option>
+                            <option key={token} value={token}>{token}</option>
                         ))}
                     </select>
                     <input
@@ -233,39 +232,39 @@ const AddLiquidity: React.FC<AddLiquidityProps> = ({ connected, wallet, signer, 
                             setInputMode('B');
                             setAmountB(e.target.value);
                         }}
-                        placeholder="0.0"
-                        className="flex-1 bg-transparent text-white text-2xl font-bold outline-none"
+                        placeholder="0.00"
+                        className="flex-1 bg-transparent text-white text-3xl font-black outline-none placeholder:text-slate-700"
                     />
                 </div>
             </div>
 
-            {/* Pool Info */}
+            {/* Pool Statistics */}
             {amountA && amountB && (
-                <div className="bg-purple-900/20 border border-purple-500/30 rounded-xl p-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Estimated LP Tokens</span>
-                        <span className="text-white font-semibold">{estimatedLP}</span>
+                <div className="bg-violet-500/10 rounded-2xl p-5 space-y-3 border border-violet-500/20 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Estimated LP Tokens</span>
+                        <span className="text-violet-400 font-black">{parseFloat(estimatedLP).toFixed(4)} LP</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Pool Share</span>
-                        <span className="text-white font-semibold">{poolShare}%</span>
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Your Pool Share</span>
+                        <span className="text-violet-400 font-black">{poolShare}%</span>
                     </div>
                 </div>
             )}
 
-            {/* Buttons */}
-            <div className="space-y-3">
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                     onClick={handleApprove}
-                    disabled={!connected}
-                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all duration-200"
+                    disabled={!connected || loading}
+                    className="py-5 bg-white/5 hover:bg-white/10 disabled:bg-slate-900 disabled:text-slate-700 text-violet-400 font-black text-lg rounded-[24px] border border-white/5 transition shadow-2xl active:scale-95"
                 >
                     1. Approve Tokens
                 </button>
                 <button
                     onClick={handleAddLiquidity}
-                    disabled={!connected || !amountA || !amountB}
-                    className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all duration-200 shadow-lg"
+                    disabled={!connected || !amountA || !amountB || loading}
+                    className="py-5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:from-slate-900 disabled:to-slate-900 disabled:text-slate-700 text-white font-black text-lg rounded-[24px] shadow-2xl shadow-violet-500/20 transition-all hover:-translate-y-1 active:scale-95"
                 >
                     2. Add Liquidity
                 </button>

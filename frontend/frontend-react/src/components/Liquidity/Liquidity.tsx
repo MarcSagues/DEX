@@ -36,26 +36,41 @@ const Liquidity: React.FC<LiquidityProps> = ({ connected, wallet, signer, chainI
     };
 
     return (
-        <div className="max-w-6xl mx-auto">
-            {/* Tabs */}
-            <div className="flex gap-2 mb-6">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${activeTab === tab.id
-                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'
-                            : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
-                            }`}
-                    >
-                        <span className="mr-2">{tab.icon}</span>
-                        {tab.label}
-                    </button>
-                ))}
+        <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter shadow-sm">
+                        Liquidity Provision
+                    </h1>
+                    <p className="text-slate-500 font-medium mt-1">
+                        Earn 0.3% on all trades by providing liquidity to the Sagui DEX.
+                    </p>
+                </div>
+                
+                {/* Tabs */}
+                <div className="flex bg-slate-900/60 backdrop-blur-md p-1.5 rounded-[22px] border border-white/5 shadow-2xl self-start md:self-auto">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`
+                                flex items-center gap-2 px-6 py-3 rounded-xl font-black transition-all duration-300 text-sm tracking-tight
+                                ${activeTab === tab.id
+                                    ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-2xl shadow-violet-500/20'
+                                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                                }
+                            `}
+                        >
+                            <span className="text-lg">{tab.icon}</span>
+                            <span>{tab.label}</span>
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* Content */}
-            <div className="bg-gray-900/50 backdrop-blur-xl rounded-2xl border border-purple-500/30 p-8">
+            {/* Content Area */}
+            <div className="bg-slate-900/40 backdrop-blur-xl rounded-[40px] border border-white/5 p-4 md:p-10 min-h-[400px] shadow-2xl shadow-black/20">
                 {renderContent()}
             </div>
         </div>

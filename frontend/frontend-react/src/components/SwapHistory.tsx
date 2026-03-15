@@ -18,28 +18,44 @@ function getTokenSymbol(address: string): string {
 
 const SwapHistory: React.FC<SwapHistoryProps> = ({ history }) => {
     return (
-        <div className="bg-white/90 rounded-xl p-4 mt-8 shadow">
+        <div className="bg-slate-900/40 backdrop-blur-md rounded-2xl p-2 md:p-4 border border-white/5">
             {history.length === 0 ? (
-                <div className="text-gray-500 text-sm">No hay swaps recientes.</div>
+                <div className="text-slate-400 text-sm font-medium py-8 text-center bg-white/5 rounded-xl border border-dashed border-white/10">
+                   No recent swaps found.
+                </div>
             ) : (
-                <ul className="divide-y divide-gray-200">
-                    {history.map((item, idx) => (
-                        <li key={item.hash + idx} className="py-2 flex flex-col md:flex-row md:items-center md:justify-between">
-                            <div className="flex items-center gap-4">
-                                {/* Hash acortado */}
-                                <span className="font-mono text-xs text-gray-400" title={item.hash}>{item.hash.slice(0, 8)}...</span>
-                                {/* Wallet acortada con hover */}
-                                <span className="font-mono text-xs text-blue-600" title={item.address}>{item.address.slice(0, 6)}...{item.address.slice(-4)}</span>
-                                {/* Valor convertido y moneda */}
-                                <span className="font-semibold">
-                                    {(parseFloat(item.amountIn) / 1e18).toFixed(2)} {getTokenSymbol(item.fromToken)}
-                                </span>
-                                <span className="mx-1 text-gray-400">→</span>
-                                <span className="font-semibold">→ {(parseFloat(item.amountOut) / 1e18).toFixed(2)} {getTokenSymbol(item.toToken)}</span>
-
+                <ul className="space-y-3">
+                    {[...history].reverse().map((item, idx) => (
+                        <li key={item.hash + idx} className="p-4 bg-white/5 rounded-xl border border-white/5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:border-indigo-500/30 transition-colors">
+                            <div className="flex items-center gap-4 flex-wrap">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-xs font-bold text-indigo-400">
+                                        TX
+                                    </div>
+                                    <span className="font-mono text-[10px] text-slate-400 font-bold" title={item.hash}>{item.hash.slice(0, 8)}...</span>
+                                </div>
+                                <div className="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                                    <span className="font-black text-white">
+                                        {(parseFloat(item.amountIn) / 1e18).toFixed(2)} {getTokenSymbol(item.fromToken)}
+                                    </span>
+                                    <span className="text-slate-400">→</span>
+                                    <span className="font-black text-indigo-400">
+                                        {(parseFloat(item.amountOut) / 1e18).toFixed(2)} {getTokenSymbol(item.toToken)}
+                                    </span>
+                                </div>
                             </div>
-                            <div className="text-xs text-gray-500 mt-1 md:mt-0">
-                                {new Date(item.timestamp * 1000).toLocaleString()}
+                            <div className="flex items-center justify-between md:justify-end gap-4 min-w-[120px]">
+                                <span className="text-[10px] font-black text-slate-400 group-hover:text-indigo-400 uppercase">
+                                    {new Date(item.timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                                <a 
+                                    href={`https://sepolia.etherscan.io/tx/${item.hash}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-1 px-3 bg-white/5 text-indigo-400 rounded-md text-[10px] font-black hover:bg-indigo-600 hover:text-white transition-all uppercase border border-white/5"
+                                >
+                                    View
+                                </a>
                             </div>
                         </li>
                     ))}

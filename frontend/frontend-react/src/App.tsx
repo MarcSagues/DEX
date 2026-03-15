@@ -20,9 +20,10 @@ const App: React.FC = () => {
     const [currentPage, setCurrentPage] = React.useState<Page>('dashboard');
     const [showWalletSelector, setShowWalletSelector] = useState(false);
     const [availableWallets, setAvailableWallets] = useState<any[]>([]);
-    const [networkName, setNetworkName] = useState<string>('Desconocida');
+    const [networkName, setNetworkName] = useState<string>('Unknown');
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-    // Escuchar cambios en la red o cuenta
+    // Listen for network or account changes
     React.useEffect(() => {
         if (window.ethereum) {
             const handleChainChanged = () => window.location.reload();
@@ -47,39 +48,39 @@ const App: React.FC = () => {
 
     const connectWallet = async () => {
         try {
-            console.log('Intentando conectar wallet...');
+            console.log('Attempting to connect wallet...');
             if (!window.ethereum) {
-                console.log('❌ No hay wallets detectadas');
-                alert('Por favor instala MetaMask u otra wallet');
+                console.log('❌ No wallets detected');
+                alert('Please install MetaMask or another wallet');
                 return;
             }
 
-            // Detectar si hay múltiples wallets
+            // Detect if there are multiple wallets
             if (window.ethereum.providers && window.ethereum.providers.length > 1) {
-                console.log('Detectando múltiples wallets...');
+                console.log('Detecting multiple wallets...');
                 const wallets = window.ethereum.providers;
                 const walletOptions = wallets.map((provider: any) => {
                     if (provider.isMetaMask) return { name: 'MetaMask', provider };
                     if (provider.isCoinbaseWallet) return { name: 'Coinbase Wallet', provider };
                     if (provider.isTrust) return { name: 'Trust Wallet', provider };
-                    return { name: 'Wallet Desconocida', provider };
+                    return { name: 'Unknown Wallet', provider };
                 });
 
                 setAvailableWallets(walletOptions);
                 setShowWalletSelector(true);
             } else {
-                // Solo hay una wallet, conectar directamente
+                // Only one wallet, connect directly
                 await selectAndConnect(window.ethereum);
             }
         } catch (error) {
-            console.error('❌ Error al conectar:', error);
+            console.error('❌ Connection error:', error);
             alert('Error: ' + error);
         }
     };
 
     const selectAndConnect = async (provider: any) => {
         try {
-            console.log('Conectando con wallet seleccionada...');
+            console.log('Connecting with selected wallet...');
             
             // Request accounts to trigger MetaMask popup
             await provider.request({ method: 'eth_requestAccounts' });
@@ -90,7 +91,7 @@ const App: React.FC = () => {
             const network = await ethersProvider.getNetwork();
             const currentChainId = Number(network.chainId);
 
-            console.log('✅ Conectado:', address, 'ChainId:', currentChainId);
+            console.log('✅ Connected:', address, 'ChainId:', currentChainId);
 
 
             setConnected(true);
@@ -103,11 +104,11 @@ const App: React.FC = () => {
             const balance = await ethersProvider.getBalance(address);
             setBalance(ethers.formatEther(balance));
 
-            // Cerrar el selector
+            // Close selector
             setShowWalletSelector(false);
         } catch (error) {
-            console.error('❌ Error al conectar con la wallet:', error);
-            alert('Error al conectar: ' + error);
+            console.error('❌ Wallet connection error:', error);
+            alert('Connection failed: ' + error);
             setShowWalletSelector(false);
         }
     };
@@ -145,9 +146,14 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-slate-50">
             {/* Sidebar */}
-            <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
+            <Sidebar 
+                currentPage={currentPage} 
+                onNavigate={setCurrentPage} 
+                isCollapsed={sidebarCollapsed}
+                onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+            />
 
             {/* Main Content */}
             <MainLayout
@@ -158,6 +164,7 @@ const App: React.FC = () => {
                 currentPage={currentPage}
                 chainId={chainId}
                 networkName={networkName}
+                sidebarCollapsed={sidebarCollapsed}
             >
                 {renderPage()}
             </MainLayout>
